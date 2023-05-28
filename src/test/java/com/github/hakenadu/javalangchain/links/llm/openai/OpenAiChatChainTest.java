@@ -28,6 +28,8 @@ class OpenAiChatChainTest {
 
 		final String name = "Manuel";
 		final String result = chain.run(Collections.singletonMap("name", name));
+		LOGGER.info(result);
+
 		assertNotNull(result, "got no result from OpenAiChatChainLink");
 		assertTrue(result.contains(name), "The answer did not contain the name");
 	}
@@ -44,8 +46,9 @@ class OpenAiChatChainTest {
 						System.getenv("OPENAI_API_KEY")));
 
 		final String result = chain.run(Collections.singletonMap("name", "Manuel"));
+		LOGGER.info(result);
+
 		assertNotNull(result, "got no result from chain");
 
-		LOGGER.info(result);
 	}
 }

@@ -55,6 +55,7 @@ public class OpenAiChatChain extends LargeLanguageModelChain {
 
 	@Override
 	public String run(final Map<String, String> input) {
+		LOGGER.info("run {}", getClass().getSimpleName());
 		return createResponseSpec(createRequest(input), webClient, objectMapper).bodyToMono(String.class)
 				.map(responseBody -> bodyToResponse(responseBody, objectMapper))
 				.map(OpenAiChatCompletionsResponse::getChoices).map(choices -> choices.get(0).getMessage())
