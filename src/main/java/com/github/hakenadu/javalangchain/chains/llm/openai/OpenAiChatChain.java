@@ -21,39 +21,41 @@ public class OpenAiChatChain extends LargeLanguageModelChain {
 
 	private final String systemTemplate;
 	private final OpenAiChatParameters parameters;
+	private final String apiKey;
 	private final ObjectMapper objectMapper;
 	private final WebClient webClient;
 
-	public OpenAiChatChain(final String promptTemplate, final OpenAiChatParameters parameters) {
-		this(promptTemplate, parameters, null);
-	}
-
-	public OpenAiChatChain(final String promptTemplate, final OpenAiChatParameters parameters,
-			final String systemTemplate) {
-		this(promptTemplate, parameters, systemTemplate, createDefaultObjectMapper(), createDefaultWebClient());
-	}
-
-	public OpenAiChatChain(final String promptTemplate, final OpenAiChatParameters parameters,
+	public OpenAiChatChain(final String promptTemplate, final OpenAiChatParameters parameters, final String apiKey,
 			final String systemTemplate, final ObjectMapper objectMapper, final WebClient webClient) {
 		super(promptTemplate);
 		this.parameters = parameters;
+		this.apiKey = apiKey;
 		this.systemTemplate = systemTemplate;
 		this.objectMapper = objectMapper;
 		this.webClient = webClient;
 	}
 
-	protected ResponseSpec createResponseSpec(final WebClient webClient, final String body) {
+	public OpenAiChatChain(final String promptTemplate, final OpenAiChatParameters parameters, final String apiKey,
+			final String systemTemplate) {
+		this(promptTemplate, parameters, apiKey, systemTemplate, createDefaultObjectMapper(), createDefaultWebClient());
+	}
+
+	public OpenAiChatChain(final String promptTemplate, final OpenAiChatParameters parameters, final String apiKey) {
+		this(promptTemplate, parameters, apiKey, null);
+	}
+
+	protected ResponseSpec createResponseSpec(final OpenAiChatCompletionsRequest request, final WebClient webClient,
+			final ObjectMapper objectMapper) {
 		return this.webClient.post()
 				.uri(UriComponentsBuilder.newInstance().scheme("https").host("api.openai.com")
 						.path("/v1/chat/completions").build().toUri())
-				.contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(body)).retrieve();
+				.contentType(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
+				.body(BodyInserters.fromValue(requestToBody(request, objectMapper))).retrieve();
 	}
 
 	@Override
 	public String run(final Map<String, String> input) {
-		final OpenAiChatCompletionsRequest request = createRequest(input);
-
-		return createResponseSpec(webClient, requestToBody(request, objectMapper)).bodyToMono(String.class)
+		return createResponseSpec(createRequest(input), webClient, objectMapper).bodyToMono(String.class)
 				.map(responseBody -> bodyToResponse(responseBody, objectMapper))
 				.map(OpenAiChatCompletionsResponse::getChoices).map(choices -> choices.get(0).getMessage())
 				.map(OpenAiChatMessage::getContent).block();
@@ -74,7 +76,7 @@ public class OpenAiChatChain extends LargeLanguageModelChain {
 		return request;
 	}
 
-	private String requestToBody(final OpenAiChatCompletionsRequest request, final ObjectMapper objectMapper) {
+	protected String requestToBody(final OpenAiChatCompletionsRequest request, final ObjectMapper objectMapper) {
 		try {
 			return objectMapper.writeValueAsString(request);
 		} catch (final JsonProcessingException jsonProcessingException) {
@@ -91,12 +93,15 @@ public class OpenAiChatChain extends LargeLanguageModelChain {
 		}
 	}
 
+	protected final String getApiKey() {
+		return apiKey;
+	}
+
 	public static ObjectMapper createDefaultObjectMapper() {
 		return new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
 	}
 
 	public static WebClient createDefaultWebClient() {
-		return WebClient.builder().defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + System.getenv("OPENAI_API_KEY"))
-				.build();
+		return WebClient.create();
 	}
 }

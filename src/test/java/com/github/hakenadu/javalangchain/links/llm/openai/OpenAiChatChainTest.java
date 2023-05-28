@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Collections;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
 import com.github.hakenadu.javalangchain.chains.Chain;
@@ -14,13 +16,15 @@ import com.github.hakenadu.javalangchain.chains.llm.openai.OpenAiChatParameters;
 
 class OpenAiChatChainTest {
 
+	private static final Logger LOGGER = LogManager.getLogger();
+
 	@Test
 	void testRun() {
 		final OpenAiChatParameters parameters = new OpenAiChatParameters();
 		parameters.setModel("gpt-3.5-turbo");
 
-		final OpenAiChatChain chain = new OpenAiChatChain("Hello, this is ${name}. What was my name again?",
-				parameters);
+		final OpenAiChatChain chain = new OpenAiChatChain("Hello, this is ${name}. What was my name again?", parameters,
+				System.getenv("OPENAI_API_KEY"));
 
 		final String name = "Manuel";
 		final String result = chain.run(Collections.singletonMap("name", name));
@@ -33,12 +37,15 @@ class OpenAiChatChainTest {
 		final OpenAiChatParameters parameters = new OpenAiChatParameters();
 		parameters.setModel("gpt-3.5-turbo");
 
-		final Chain<Map<String, String>, String> chain = 
-				new OpenAiChatChain("Hello, this is ${name}. What is your name?", parameters)
-						.chain(prev -> Collections.singletonMap("result", prev))
-						.chain(new OpenAiChatChain("What was the question for the following answer: ${result}", parameters));
+		final Chain<Map<String, String>, String> chain = new OpenAiChatChain(
+				"Hello, this is ${name}. What is your name?", parameters, System.getenv("OPENAI_API_KEY"))
+				.chain(prev -> Collections.singletonMap("result", prev))
+				.chain(new OpenAiChatChain("What was the question for the following answer: ${result}", parameters,
+						System.getenv("OPENAI_API_KEY")));
 
 		final String result = chain.run(Collections.singletonMap("name", "Manuel"));
-		System.out.println(result);
+		assertNotNull(result, "got no result from chain");
+
+		LOGGER.info(result);
 	}
 }
