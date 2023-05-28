@@ -51,6 +51,15 @@ public class OpenAiChatChainLink extends LargeLanguageModelChainLink {
 
 	@Override
 	public String run(final Map<String, String> input) {
+		final OpenAiChatCompletionsRequest request = createRequest(input);
+
+		return createResponseSpec(webClient, requestToBody(request, objectMapper)).bodyToMono(String.class)
+				.map(responseBody -> bodyToResponse(responseBody, objectMapper))
+				.map(OpenAiChatCompletionsResponse::getChoices).map(choices -> choices.get(0).getMessage())
+				.map(OpenAiChatMessage::getContent).block();
+	}
+
+	private OpenAiChatCompletionsRequest createRequest(final Map<String, String> input) {
 		final List<OpenAiChatMessage> messages = new LinkedList<>();
 		if (systemTemplate != null) {
 			messages.add(new OpenAiChatMessage("system", new StringSubstitutor(input).replace(systemTemplate)));
@@ -62,10 +71,7 @@ public class OpenAiChatChainLink extends LargeLanguageModelChainLink {
 			request.copyFrom(parameters);
 		}
 
-		return createResponseSpec(webClient, requestToBody(request, objectMapper)).bodyToMono(String.class)
-				.map(responseBody -> bodyToResponse(responseBody, objectMapper))
-				.map(OpenAiChatCompletionsResponse::getChoices).map(choices -> choices.get(0).getMessage())
-				.map(OpenAiChatMessage::getContent).block();
+		return request;
 	}
 
 	private String requestToBody(final OpenAiChatCompletionsRequest request, final ObjectMapper objectMapper) {
