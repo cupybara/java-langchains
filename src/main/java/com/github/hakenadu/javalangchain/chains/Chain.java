@@ -12,7 +12,7 @@ public interface Chain<I, O> {
 	default <B> Chain<I, B> chain(final Chain<O, B> next) {
 		return input -> {
 			final O prevOutput = run(input);
-			LOGGER.debug("output: {}", prevOutput);
+			LOGGER.debug("prev output: {}", prevOutput);
 
 			final B nextOutput = next.run(prevOutput);
 			LOGGER.debug("next output: {}", nextOutput);
