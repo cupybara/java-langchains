@@ -21,6 +21,7 @@
 		<jackson.version>2.15.1</jackson.version>
 		<junit.jupiter.version>5.9.3</junit.jupiter.version>
 		<log4j.version>2.20.0</log4j.version>
+		<lucene.version>8.10.1</lucene.version>
 		<webflux.version>6.0.9</webflux.version>
 	</properties>
 
@@ -55,6 +56,15 @@
 			<artifactId>spring-webflux</artifactId>
 			<version>${webflux.version}</version>
 		</dependency>
+
+		<!-- Stuff for future modularization -->
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-core</artifactId>
+			<version>${lucene.version}</version>
+		</dependency>
+
+		<!-- Test Dependencies -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>

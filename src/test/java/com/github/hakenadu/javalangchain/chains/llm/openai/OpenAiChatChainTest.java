@@ -1,4 +1,4 @@
-package com.github.hakenadu.javalangchain.links.llm.openai;
+package com.github.hakenadu.javalangchain.chains.llm.openai;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -11,8 +11,6 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
 import com.github.hakenadu.javalangchain.chains.Chain;
-import com.github.hakenadu.javalangchain.chains.llm.openai.OpenAiChatChain;
-import com.github.hakenadu.javalangchain.chains.llm.openai.OpenAiChatParameters;
 
 class OpenAiChatChainTest {
 
@@ -49,6 +47,5 @@ class OpenAiChatChainTest {
 		LOGGER.info(result);
 
 		assertNotNull(result, "got no result from chain");
-
 	}
 }

@@ -17,6 +17,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.hakenadu.javalangchain.chains.llm.LargeLanguageModelChain;
 
+/**
+ * {@link LargeLanguageModelChain} 
+ */
 public class OpenAiChatChain extends LargeLanguageModelChain {
 
 	private final String systemTemplate;
