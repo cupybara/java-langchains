@@ -1,4 +1,4 @@
-package com.github.hakenadu.javalangchain.links.llm.openai;
+package com.github.hakenadu.javalangchain.chains.llm.openai;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,25 +15,25 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.hakenadu.javalangchain.links.llm.LargeLanguageModelChainLink;
+import com.github.hakenadu.javalangchain.chains.llm.LargeLanguageModelChain;
 
-public class OpenAiChatChainLink extends LargeLanguageModelChainLink {
+public class OpenAiChatChain extends LargeLanguageModelChain {
 
 	private final String systemTemplate;
 	private final OpenAiChatParameters parameters;
 	private final ObjectMapper objectMapper;
 	private final WebClient webClient;
 
-	public OpenAiChatChainLink(final String promptTemplate, final OpenAiChatParameters parameters) {
+	public OpenAiChatChain(final String promptTemplate, final OpenAiChatParameters parameters) {
 		this(promptTemplate, parameters, null);
 	}
 
-	public OpenAiChatChainLink(final String promptTemplate, final OpenAiChatParameters parameters,
+	public OpenAiChatChain(final String promptTemplate, final OpenAiChatParameters parameters,
 			final String systemTemplate) {
 		this(promptTemplate, parameters, systemTemplate, createDefaultObjectMapper(), createDefaultWebClient());
 	}
 
-	public OpenAiChatChainLink(final String promptTemplate, final OpenAiChatParameters parameters,
+	public OpenAiChatChain(final String promptTemplate, final OpenAiChatParameters parameters,
 			final String systemTemplate, final ObjectMapper objectMapper, final WebClient webClient) {
 		super(promptTemplate);
 		this.parameters = parameters;

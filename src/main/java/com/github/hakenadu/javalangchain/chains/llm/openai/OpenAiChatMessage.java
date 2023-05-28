@@ -1,4 +1,4 @@
-package com.github.hakenadu.javalangchain.links.llm.openai;
+package com.github.hakenadu.javalangchain.chains.llm.openai;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
