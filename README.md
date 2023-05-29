@@ -5,9 +5,9 @@ It was born from the need to create an enterprise QA application.
 ## Dependency
 ```xml
 <dependency>
-  <groupId>com.github.hakenadu</groupId>
-  <artifactId>java-langchains</artifactId>
-  <version>0.0.2</version>
+    <groupId>com.github.hakenadu</groupId>
+    <artifactId>java-langchains</artifactId>
+    <version>0.0.2</version>
 </dependency>
 ```
 
