@@ -76,6 +76,7 @@
 		<maven.release.plugin.version>3.0.0</maven.release.plugin.version>
 		<maven.scm.provider.gitexe.version>2.0.1</maven.scm.provider.gitexe.version>
 		<maven.source.plugin.version>3.3.0</maven.source.plugin.version>
+		<maven.surefire.plugin.version>3.1.0</maven.surefire.plugin.version>
 		<nexus.staging.maven.plugin.version>1.6.13</nexus.staging.maven.plugin.version>
 		<reactor.version>1.1.7</reactor.version>
 		<webflux.version>5.3.27</webflux.version>
@@ -184,6 +185,11 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven.surefire.plugin.version}</version>
 			</plugin>
 		</plugins>
 	</build>
