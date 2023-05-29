@@ -2,33 +2,37 @@ package com.github.hakenadu.javalangchain.chains.retrieval.lucene;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexableField;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.store.Directory;
 
-import com.github.hakenadu.javalangchain.chains.retrieval.Document;
 import com.github.hakenadu.javalangchain.chains.retrieval.RetrievalChain;
+import com.github.hakenadu.javalangchain.chains.retrieval.RetrievedDocuments;
 
 public class LuceneRetrievalChain extends RetrievalChain implements Closeable {
 
 	private final Function<String, Query> queryCreator;
-	private final Function<org.apache.lucene.document.Document, Document> documentCreator;
+	private final Function<Document, Map<String, String>> documentCreator;
 
 	private final IndexReader indexReader;
 	private final IndexSearcher indexSearcher;
 
 	public LuceneRetrievalChain(final Directory indexDirectory, final int maxDocumentCount,
-			final Function<String, Query> queryCreator,
-			final Function<org.apache.lucene.document.Document, Document> documentCreator) {
+			final Function<String, Query> queryCreator, final Function<Document, Map<String, String>> documentCreator) {
 		super(maxDocumentCount);
 		this.queryCreator = queryCreator;
 		this.documentCreator = documentCreator;
@@ -40,10 +44,24 @@ public class LuceneRetrievalChain extends RetrievalChain implements Closeable {
 		}
 
 		this.indexSearcher = new IndexSearcher(indexReader);
+		this.indexSearcher.setSimilarity(new BM25Similarity()); // TODO: Parameterize
+	}
+
+	public LuceneRetrievalChain(final Directory indexDirectory, final int maxDocumentCount,
+			final Function<String, Query> queryCreator) {
+		this(indexDirectory, maxDocumentCount, queryCreator, LuceneRetrievalChain::createDocument);
+	}
+
+	public LuceneRetrievalChain(final Directory indexDirectory, final int maxDocumentCount) {
+		this(indexDirectory, maxDocumentCount, LuceneRetrievalChain::createQuery, LuceneRetrievalChain::createDocument);
+	}
+
+	public LuceneRetrievalChain(final Directory indexDirectory) {
+		this(indexDirectory, 4);
 	}
 
 	@Override
-	public Collection<Document> run(final String input) {
+	public RetrievedDocuments run(final String input) {
 		final Query query = queryCreator.apply(input);
 
 		final TopDocs topDocs;
@@ -53,26 +71,32 @@ public class LuceneRetrievalChain extends RetrievalChain implements Closeable {
 			throw new IllegalStateException("error processing search for query " + query, ioException);
 		}
 
-		final ScoreDoc[] hits = topDocs.scoreDocs;
-
-		final List<Document> documents = new LinkedList<>();
-		for (final ScoreDoc hit : hits) {
-			final org.apache.lucene.document.Document doc;
+		return new RetrievedDocuments(input, Arrays.stream(topDocs.scoreDocs).map(hit -> {
 			try {
-				doc = indexSearcher.doc(hit.doc);
+				return indexSearcher.doc(hit.doc);
 			} catch (final IOException ioException) {
 				throw new IllegalStateException("could not process document " + hit.doc, ioException);
 			}
-
-			final Document document = documentCreator.apply(doc);
-			documents.add(document);
-		}
-
-		return documents;
+		}).map(this.documentCreator));
 	}
 
 	@Override
 	public void close() throws IOException {
 		this.indexReader.close();
+	}
+
+	private static Map<String, String> createDocument(final Document document) {
+		return document.getFields().stream()
+				.collect(Collectors.toMap(IndexableField::name, IndexableField::stringValue));
+	}
+
+	private static Query createQuery(final String searchTerm) {
+		final StandardAnalyzer analyzer = new StandardAnalyzer();
+		final QueryParser queryParser = new QueryParser("content", analyzer);
+		try {
+			return queryParser.parse(searchTerm);
+		} catch (final ParseException parseException) {
+			throw new IllegalStateException("could not create query for searchTerm " + searchTerm, parseException);
+		}
 	}
 }

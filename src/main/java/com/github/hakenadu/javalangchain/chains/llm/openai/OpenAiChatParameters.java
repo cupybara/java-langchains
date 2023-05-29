@@ -99,12 +99,22 @@ public class OpenAiChatParameters {
 		this.frequencePenalty = frequencePenalty;
 	}
 
+	public OpenAiChatParameters frequencePenalty(final Double frequencePenalty) {
+		this.setFrequencePenalty(frequencePenalty);
+		return this;
+	}
+
 	public Map<Integer, Integer> getLogitBias() {
 		return logitBias;
 	}
 
 	public void setLogitBias(final Map<Integer, Integer> logitBias) {
 		this.logitBias = logitBias;
+	}
+
+	public OpenAiChatParameters logitBias(final Map<Integer, Integer> logitBias) {
+		setLogitBias(logitBias);
+		return this;
 	}
 
 	public Integer getMaxTokens() {
@@ -115,12 +125,22 @@ public class OpenAiChatParameters {
 		this.maxTokens = maxTokens;
 	}
 
+	public OpenAiChatParameters maxTokens(final Integer maxTokens) {
+		setMaxTokens(maxTokens);
+		return this;
+	}
+
 	public String getModel() {
 		return model;
 	}
 
 	public void setModel(final String model) {
 		this.model = model;
+	}
+
+	public OpenAiChatParameters model(final String model) {
+		setModel(model);
+		return this;
 	}
 
 	public Integer getN() {
@@ -131,6 +151,11 @@ public class OpenAiChatParameters {
 		this.n = n;
 	}
 
+	public OpenAiChatParameters n(final Integer n) {
+		setN(n);
+		return this;
+	}
+
 	public Double getPresencePenalty() {
 		return presencePenalty;
 	}
@@ -139,12 +164,22 @@ public class OpenAiChatParameters {
 		this.presencePenalty = presencePenalty;
 	}
 
+	public OpenAiChatParameters presencePenalty(final Double presencePenalty) {
+		this.setPresencePenalty(presencePenalty);
+		return this;
+	}
+
 	public Integer getTemperature() {
 		return temperature;
 	}
 
 	public void setTemperature(final Integer temperature) {
 		this.temperature = temperature;
+	}
+
+	public OpenAiChatParameters temperature(final Integer temperature) {
+		this.setTemperature(temperature);
+		return this;
 	}
 
 	public void copyFrom(final OpenAiChatParameters parameters) {
