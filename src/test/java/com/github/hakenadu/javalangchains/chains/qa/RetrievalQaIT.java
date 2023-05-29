@@ -1,4 +1,4 @@
-package com.github.hakenadu.javalangchain.chains.qa;
+package com.github.hakenadu.javalangchains.chains.qa;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -16,7 +16,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import com.github.hakenadu.javalangchain.chains.retrieval.lucene.LuceneRetrievalChainTest;
 import com.github.hakenadu.javalangchains.chains.Chain;
 import com.github.hakenadu.javalangchains.chains.llm.openai.OpenAiChatChain;
 import com.github.hakenadu.javalangchains.chains.llm.openai.OpenAiChatParameters;
@@ -25,6 +24,7 @@ import com.github.hakenadu.javalangchains.chains.retrieval.CombineDocumentsChain
 import com.github.hakenadu.javalangchains.chains.retrieval.MapAnswerWithSourcesChain;
 import com.github.hakenadu.javalangchains.chains.retrieval.SummarizeDocumentsChain;
 import com.github.hakenadu.javalangchains.chains.retrieval.lucene.LuceneRetrievalChain;
+import com.github.hakenadu.javalangchains.chains.retrieval.lucene.LuceneRetrievalChainTest;
 import com.github.hakenadu.javalangchains.util.PromptTemplates;
 
 /**
