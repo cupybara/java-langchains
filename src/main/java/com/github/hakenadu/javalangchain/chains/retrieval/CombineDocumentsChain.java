@@ -2,14 +2,17 @@ package com.github.hakenadu.javalangchain.chains.retrieval;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.text.StringSubstitutor;
 
 import com.github.hakenadu.javalangchain.chains.Chain;
+import com.github.hakenadu.javalangchain.util.PromptConstants;
 import com.github.hakenadu.javalangchain.util.PromptTemplates;
 
-public class CombineDocumentsChain implements Chain<RetrievedDocuments, Map<String, String>> {
+public class CombineDocumentsChain implements Chain<Stream<Map<String, String>>, Map<String, String>> {
 
 	private final String documentPromptTemplate;
 
@@ -22,13 +25,19 @@ public class CombineDocumentsChain implements Chain<RetrievedDocuments, Map<Stri
 	}
 
 	@Override
-	public Map<String, String> run(final RetrievedDocuments input) {
-		final String summaries = input.getDocuments().map(this::createDocumentPrompt)
-				.collect(Collectors.joining("\n\n"));
+	public Map<String, String> run(final Stream<Map<String, String>> input) {
+		final AtomicReference<String> questionRef = new AtomicReference<>();
+
+		final String combinedContent = input.map(document -> {
+			if (questionRef.get() == null) {
+				questionRef.set(document.get(PromptConstants.QUESTION));
+			}
+			return this.createDocumentPrompt(document);
+		}).collect(Collectors.joining("\n\n"));
 
 		final Map<String, String> result = new HashMap<>();
-		result.put("question", input.getQuestion());
-		result.put("summaries", summaries);
+		result.put("question", questionRef.get());
+		result.put("content", combinedContent);
 		return result;
 	}
 

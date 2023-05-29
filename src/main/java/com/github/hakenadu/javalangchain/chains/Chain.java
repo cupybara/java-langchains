@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 @FunctionalInterface
 public interface Chain<I, O> {
-	static Logger LOGGER = LogManager.getLogger(Chain.class);
+	static Logger LOGGER = LogManager.getLogger();
 
 	O run(I input);
 

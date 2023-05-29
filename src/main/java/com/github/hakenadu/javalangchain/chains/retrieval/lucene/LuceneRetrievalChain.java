@@ -3,9 +3,11 @@ package com.github.hakenadu.javalangchain.chains.retrieval.lucene;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -21,7 +23,7 @@ import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.store.Directory;
 
 import com.github.hakenadu.javalangchain.chains.retrieval.RetrievalChain;
-import com.github.hakenadu.javalangchain.chains.retrieval.RetrievedDocuments;
+import com.github.hakenadu.javalangchain.util.PromptConstants;
 
 public class LuceneRetrievalChain extends RetrievalChain implements Closeable {
 
@@ -61,7 +63,7 @@ public class LuceneRetrievalChain extends RetrievalChain implements Closeable {
 	}
 
 	@Override
-	public RetrievedDocuments run(final String input) {
+	public Stream<Map<String, String>> run(final String input) {
 		final Query query = queryCreator.apply(input);
 
 		final TopDocs topDocs;
@@ -71,13 +73,17 @@ public class LuceneRetrievalChain extends RetrievalChain implements Closeable {
 			throw new IllegalStateException("error processing search for query " + query, ioException);
 		}
 
-		return new RetrievedDocuments(input, Arrays.stream(topDocs.scoreDocs).map(hit -> {
+		return Arrays.stream(topDocs.scoreDocs).map(hit -> {
 			try {
 				return indexSearcher.doc(hit.doc);
 			} catch (final IOException ioException) {
 				throw new IllegalStateException("could not process document " + hit.doc, ioException);
 			}
-		}).map(this.documentCreator));
+		}).map(this.documentCreator).map(document -> {
+			final Map<String, String> mappedDocument = new LinkedHashMap<>(document);
+			mappedDocument.put(PromptConstants.QUESTION, input);
+			return mappedDocument;
+		});
 	}
 
 	@Override

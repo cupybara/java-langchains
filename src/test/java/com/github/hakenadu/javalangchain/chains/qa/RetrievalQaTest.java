@@ -1,5 +1,6 @@
 package com.github.hakenadu.javalangchain.chains.qa;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
@@ -18,7 +19,10 @@ import org.junit.jupiter.api.Test;
 import com.github.hakenadu.javalangchain.chains.Chain;
 import com.github.hakenadu.javalangchain.chains.llm.openai.OpenAiChatChain;
 import com.github.hakenadu.javalangchain.chains.llm.openai.OpenAiChatParameters;
+import com.github.hakenadu.javalangchain.chains.retrieval.AnswerWithSources;
 import com.github.hakenadu.javalangchain.chains.retrieval.CombineDocumentsChain;
+import com.github.hakenadu.javalangchain.chains.retrieval.MapAnswerWithSourcesChain;
+import com.github.hakenadu.javalangchain.chains.retrieval.SummarizeDocumentsChain;
 import com.github.hakenadu.javalangchain.chains.retrieval.lucene.LuceneRetrievalChain;
 import com.github.hakenadu.javalangchain.chains.retrieval.lucene.LuceneRetrievalChainTest;
 import com.github.hakenadu.javalangchain.util.PromptTemplates;
@@ -46,6 +50,9 @@ class RetrievalQaTest {
 
 	@Test
 	public void testQa() throws IOException {
+		final OpenAiChatParameters openAiChatParameters = new OpenAiChatParameters().temperature(0)
+				.model("gpt-3.5-turbo");
+
 		/*
 		 * Chain 1: The retrievalChain is used to retrieve relevant documents from an
 		 * index by using bm25 similarity
@@ -53,26 +60,42 @@ class RetrievalQaTest {
 		try (final LuceneRetrievalChain retrievalChain = new LuceneRetrievalChain(directory, 2)) {
 
 			/*
-			 * Chain 2: The combineDocumentsChain is used to combine the retrieved documents
+			 * Chain 2: The summarizeDocumentsChain is used to summarize documents to only
+			 * contain the most relevant information. This is achieved using an OpenAI LLM
+			 * (gpt-3.5-turbo in this case)
+			 */
+			final SummarizeDocumentsChain summarizeDocumentsChain = new SummarizeDocumentsChain(new OpenAiChatChain(
+					PromptTemplates.QA_SUMMARIZE, openAiChatParameters, System.getenv("OPENAI_API_KEY")));
+
+			/*
+			 * Chain 3: The combineDocumentsChain is used to combine the retrieved documents
 			 * in a single prompt
 			 */
 			final CombineDocumentsChain combineDocumentsChain = new CombineDocumentsChain();
 
 			/*
-			 * Chain 3: The openAiChatChain is used to process the combined prompt using an
+			 * Chain 4: The openAiChatChain is used to process the combined prompt using an
 			 * OpenAI LLM (gpt-3.5-turbo in this case)
 			 */
 			final OpenAiChatChain openAiChatChain = new OpenAiChatChain(PromptTemplates.QA_COMBINE,
-					new OpenAiChatParameters().model("gpt-3.5-turbo"), System.getenv("OPENAI_API_KEY"));
+					openAiChatParameters, System.getenv("OPENAI_API_KEY"));
+
+			/*
+			 * Chain 5: The mapAnswerWithSourcesChain is used to map the llm string output
+			 * to a complex object using a regular expression which splits the sources and
+			 * the answer.
+			 */
+			final MapAnswerWithSourcesChain mapAnswerWithSourcesChain = new MapAnswerWithSourcesChain();
 
 			// we combine all chain links into a self contained QA chain
-			final Chain<String, String> qaChain = retrievalChain.chain(combineDocumentsChain).chain(openAiChatChain);
+			final Chain<String, AnswerWithSources> qaChain = retrievalChain.chain(summarizeDocumentsChain)
+					.chain(combineDocumentsChain).chain(openAiChatChain).chain(mapAnswerWithSourcesChain);
 
 			// the QA chain can now be called with a question and delivers an answer
-			final String answer = qaChain.run("what is john's art gallery called?");
-			assertNotNull(answer, "no answer provided");
-
-			LogManager.getLogger().info(answer);
+			final AnswerWithSources answerToValidQuestion = qaChain.run("who is john doe?");
+			assertNotNull(answerToValidQuestion, "no answer provided");
+			assertFalse(answerToValidQuestion.getSources().isEmpty(), "no sources");
+			LogManager.getLogger().info("answer to valid question: {}", answerToValidQuestion);
 		}
 	}
 }

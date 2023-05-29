@@ -27,7 +27,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import com.github.hakenadu.javalangchain.chains.retrieval.RetrievedDocuments;
+import com.github.hakenadu.javalangchain.util.PromptConstants;
 
 /**
  * Tests for the {@link LuceneRetrievalChain}
@@ -86,9 +86,8 @@ public class LuceneRetrievalChainTest {
 
 			for (final String content : documents) {
 				final Document doc = new Document();
-				doc.add(new StringField("id", String.valueOf(documents.indexOf(content) + 1), Field.Store.YES));
-				doc.add(new TextField("content", content, Field.Store.YES));
-				doc.add(new TextField("source", "Book of John p." + (documents.indexOf(content) + 1),
+				doc.add(new TextField(PromptConstants.CONTENT, content, Field.Store.YES));
+				doc.add(new StringField(PromptConstants.SOURCE, String.valueOf(documents.indexOf(content) + 1),
 						Field.Store.YES));
 				indexWriter.addDocument(doc);
 			}
@@ -108,19 +107,16 @@ public class LuceneRetrievalChainTest {
 		try (final LuceneRetrievalChain retrievalChain = new LuceneRetrievalChain(directory, 2)) {
 			final String question = "what kind of art does john make?";
 
-			final RetrievedDocuments retrievedDocuments = retrievalChain.run(question);
-			assertEquals(question, retrievedDocuments.getQuestion(), "question not stored correctly");
-
-			final List<Map<String, String>> documents = retrievedDocuments.getDocuments()
+			final List<Map<String, String>> documents = retrievalChain.run(question)
 					.collect(Collectors.toUnmodifiableList());
 			assertFalse(documents.isEmpty(), "no documents retrieved");
 
 			final Map<String, String> mostRelevantDocument = documents.get(0);
-			assertTrue(mostRelevantDocument.containsKey("id"), "key 'id' is missing");
-			assertEquals("2", mostRelevantDocument.get("id"), "invalid id");
+			assertTrue(mostRelevantDocument.containsKey(PromptConstants.SOURCE), "source key is missing");
+			assertEquals("2", mostRelevantDocument.get(PromptConstants.SOURCE), "invalid source");
 
-			assertTrue(mostRelevantDocument.containsKey("content"), "key 'content' is missing");
-			assertEquals(DOCUMENT_2, mostRelevantDocument.get("content"), "invalid content");
+			assertTrue(mostRelevantDocument.containsKey(PromptConstants.CONTENT), "content key is missing");
+			assertEquals(DOCUMENT_2, mostRelevantDocument.get(PromptConstants.CONTENT), "invalid content");
 		}
 	}
 }
