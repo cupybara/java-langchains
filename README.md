@@ -2,6 +2,15 @@
 This repository aims to provide a java alternative to [hwchase17/langchain](https://github.com/hwchase17/langchain).
 It was born from the need to create an enterprise QA application.
 
+## Dependency
+```xml
+<dependency>
+	<groupId>com.github.hakenadu</groupId>
+	<artifactId>java-langchains</artifactId>
+	<version>0.0.2</version>
+</dependency>
+```
+
 ## Base Concept
 Modular components implement the [Chain](src/main/java/com/github/hakenadu/javalangchains/chains/Chain.java) interface.
 This provides an easy way to modularize the application and enables us to reuse them for various use cases.
