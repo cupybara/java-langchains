@@ -8,6 +8,53 @@
 	<artifactId>java-langchain</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
+	<name>Java.langchain</name>
+	<description>
+		A library which provides components to build LLM based applications in
+		Java
+	</description>
+	<url>https://github.com/Hakenadu/java-langchain</url>
+
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>http://www.opensource.org/licenses/mit-license.php</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>mseiche</id>
+			<name>Manuel Seiche</name>
+			<email>hakenadu91@gmail.com</email>
+			<url>https://mseiche.de</url>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>Europe/Berlin</timezone>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git://github.com/Hakenadu/java-langchain.git</connection>
+		<developerConnection>
+			scm:git:ssh://github.com:Hakenadu/java-langchain.git
+		</developerConnection>
+		<url>https://github.com/Hakenadu/java-langchain/tree/master</url>
+	</scm>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
+
 	<properties>
 		<java.version>1.8</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
@@ -22,8 +69,39 @@
 		<junit.jupiter.version>5.9.3</junit.jupiter.version>
 		<log4j.version>2.20.0</log4j.version>
 		<lucene.version>8.10.1</lucene.version>
+		<maven.gpg.plugin.version>3.1.0</maven.gpg.plugin.version>
 		<webflux.version>6.0.9</webflux.version>
 	</properties>
+
+	<profiles>
+		<profile>
+			<id>release-sign-artifacts</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>${maven.gpg.plugin.version}</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 	<dependencies>
 		<dependency>

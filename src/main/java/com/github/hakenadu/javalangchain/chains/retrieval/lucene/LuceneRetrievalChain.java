@@ -25,6 +25,9 @@ import org.apache.lucene.store.Directory;
 import com.github.hakenadu.javalangchain.chains.retrieval.RetrievalChain;
 import com.github.hakenadu.javalangchain.util.PromptConstants;
 
+/**
+ * This {@link RetrievalChain} retrieves documents from a lucene index
+ */
 public class LuceneRetrievalChain extends RetrievalChain implements Closeable {
 
 	private final Function<String, Query> queryCreator;
@@ -33,6 +36,18 @@ public class LuceneRetrievalChain extends RetrievalChain implements Closeable {
 	private final IndexReader indexReader;
 	private final IndexSearcher indexSearcher;
 
+	/**
+	 * Creates an instance of {@link LuceneRetrievalChain}
+	 * 
+	 * @param indexDirectory   Lucene Index {@link Directory}
+	 * @param maxDocumentCount maximal count of retrieved documents
+	 * @param queryCreator     this {@link Function} accepts the user's question and
+	 *                         provides the {@link Query} which is executed against
+	 *                         the Lucene {@link Directory}
+	 * @param documentCreator  this {@link Function} accepts a lucene
+	 *                         {@link Document} and provides a {@link Map} of key
+	 *                         value pairs for subsequent chains
+	 */
 	public LuceneRetrievalChain(final Directory indexDirectory, final int maxDocumentCount,
 			final Function<String, Query> queryCreator, final Function<Document, Map<String, String>> documentCreator) {
 		super(maxDocumentCount);
@@ -49,15 +64,46 @@ public class LuceneRetrievalChain extends RetrievalChain implements Closeable {
 		this.indexSearcher.setSimilarity(new BM25Similarity()); // TODO: Parameterize
 	}
 
+	/**
+	 * Creates an instance of {@link LuceneRetrievalChain}. Uses
+	 * {@link #createDocument(Document)} to map all lucene document fields into the
+	 * output {@link Map}.
+	 * 
+	 * @param indexDirectory   Lucene Index {@link Directory}
+	 * @param maxDocumentCount maximal count of retrieved documents
+	 * @param queryCreator     this {@link Function} accepts the user's question and
+	 *                         provides the {@link Query} which is executed against
+	 *                         the Lucene {@link Directory}
+	 */
 	public LuceneRetrievalChain(final Directory indexDirectory, final int maxDocumentCount,
 			final Function<String, Query> queryCreator) {
 		this(indexDirectory, maxDocumentCount, queryCreator, LuceneRetrievalChain::createDocument);
 	}
 
+	/**
+	 * Creates an instance of {@link LuceneRetrievalChain}. Uses
+	 * {@link #createQuery(String)} to provide a default {@link Query} using a
+	 * {@link StandardAnalyzer} targeting the field
+	 * {@link PromptConstants#CONTENT}.. Uses {@link #createDocument(Document)} to
+	 * map all lucene document fields into the output {@link Map}.
+	 * 
+	 * @param indexDirectory   Lucene Index {@link Directory}
+	 * @param maxDocumentCount maximal count of retrieved documents
+	 */
 	public LuceneRetrievalChain(final Directory indexDirectory, final int maxDocumentCount) {
 		this(indexDirectory, maxDocumentCount, LuceneRetrievalChain::createQuery, LuceneRetrievalChain::createDocument);
 	}
 
+	/**
+	 * Creates an instance of {@link LuceneRetrievalChain} with a maximum of 4
+	 * retrieved documents. Uses {@link #createQuery(String)} to provide a default
+	 * {@link Query} using a {@link StandardAnalyzer} targeting the field
+	 * {@link PromptConstants#CONTENT}.. Uses {@link #createDocument(Document)} to
+	 * map all lucene document fields into the output {@link Map}.
+	 * 
+	 * @param indexDirectory   Lucene Index {@link Directory}
+	 * @param maxDocumentCount maximal count of retrieved documents
+	 */
 	public LuceneRetrievalChain(final Directory indexDirectory) {
 		this(indexDirectory, 4);
 	}
@@ -98,7 +144,7 @@ public class LuceneRetrievalChain extends RetrievalChain implements Closeable {
 
 	private static Query createQuery(final String searchTerm) {
 		final StandardAnalyzer analyzer = new StandardAnalyzer();
-		final QueryParser queryParser = new QueryParser("content", analyzer);
+		final QueryParser queryParser = new QueryParser(PromptConstants.CONTENT, analyzer);
 		try {
 			return queryParser.parse(searchTerm);
 		} catch (final ParseException parseException) {
