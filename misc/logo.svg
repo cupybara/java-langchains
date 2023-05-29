@@ -1,5 +1,5 @@
 <svg width="500" height="69" xmlns="http://www.w3.org/2000/svg">
-    <text x="0" y="50" font-family="Courier New" font-size="35">
-        <tspan fill="#CC5555">Java.lang</tspan><tspan fill="darkgoldenrod">chain</tspan>
+    <text x="0" y="50" font-family="Courier New" font-size="35" font-weight="bold">
+        <tspan fill="#CC5555">Java.lang</tspan><tspan fill="orange">chain</tspan>
     </text>
 </svg>
