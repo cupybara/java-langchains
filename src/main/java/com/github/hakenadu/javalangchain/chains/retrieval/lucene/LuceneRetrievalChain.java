@@ -101,8 +101,7 @@ public class LuceneRetrievalChain extends RetrievalChain implements Closeable {
 	 * {@link PromptConstants#CONTENT}.. Uses {@link #createDocument(Document)} to
 	 * map all lucene document fields into the output {@link Map}.
 	 * 
-	 * @param indexDirectory   Lucene Index {@link Directory}
-	 * @param maxDocumentCount maximal count of retrieved documents
+	 * @param indexDirectory Lucene Index {@link Directory}
 	 */
 	public LuceneRetrievalChain(final Directory indexDirectory) {
 		this(indexDirectory, 4);

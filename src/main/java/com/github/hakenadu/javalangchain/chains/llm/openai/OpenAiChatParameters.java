@@ -91,97 +91,172 @@ public class OpenAiChatParameters {
 	@JsonProperty
 	private Integer temperature;
 
+	/**
+	 * @return {@link #frequencePenalty}
+	 */
 	public Double getFrequencePenalty() {
 		return frequencePenalty;
 	}
 
+	/**
+	 * @param frequencePenalty {@link #frequencePenalty}
+	 */
 	public void setFrequencePenalty(final Double frequencePenalty) {
 		this.frequencePenalty = frequencePenalty;
 	}
 
+	/**
+	 * @param frequencePenalty {@link #frequencePenalty}
+	 * @return this
+	 */
 	public OpenAiChatParameters frequencePenalty(final Double frequencePenalty) {
 		this.setFrequencePenalty(frequencePenalty);
 		return this;
 	}
 
+	/**
+	 * @return {@link #logitBias}
+	 */
 	public Map<Integer, Integer> getLogitBias() {
 		return logitBias;
 	}
 
+	/**
+	 * @param logitBias {@link #logitBias}
+	 */
 	public void setLogitBias(final Map<Integer, Integer> logitBias) {
 		this.logitBias = logitBias;
 	}
 
+	/**
+	 * @param logitBias {@link #logitBias}
+	 * @return this
+	 */
 	public OpenAiChatParameters logitBias(final Map<Integer, Integer> logitBias) {
 		setLogitBias(logitBias);
 		return this;
 	}
 
+	/**
+	 * @return {@link #maxTokens}
+	 */
 	public Integer getMaxTokens() {
 		return maxTokens;
 	}
 
+	/**
+	 * @param maxTokens {@link #maxTokens}
+	 */
 	public void setMaxTokens(final Integer maxTokens) {
 		this.maxTokens = maxTokens;
 	}
 
+	/**
+	 * @param maxTokens {@link #maxTokens}
+	 * @return this
+	 */
 	public OpenAiChatParameters maxTokens(final Integer maxTokens) {
 		setMaxTokens(maxTokens);
 		return this;
 	}
 
+	/**
+	 * @return {@link #model}
+	 */
 	public String getModel() {
 		return model;
 	}
 
+	/**
+	 * @param model {@link #model}
+	 */
 	public void setModel(final String model) {
 		this.model = model;
 	}
 
+	/**
+	 * @param model {@link #model}
+	 * @return this
+	 */
 	public OpenAiChatParameters model(final String model) {
 		setModel(model);
 		return this;
 	}
 
+	/**
+	 * @return {@link #n}
+	 */
 	public Integer getN() {
 		return n;
 	}
 
+	/**
+	 * @param n {@link #n}
+	 */
 	public void setN(final Integer n) {
 		this.n = n;
 	}
 
+	/**
+	 * @param n {@link #n}
+	 * @return this
+	 */
 	public OpenAiChatParameters n(final Integer n) {
 		setN(n);
 		return this;
 	}
 
+	/**
+	 * @return {@link #presencePenalty}
+	 */
 	public Double getPresencePenalty() {
 		return presencePenalty;
 	}
 
+	/**
+	 * @param presencePenalty {@link #presencePenalty}
+	 */
 	public void setPresencePenalty(final Double presencePenalty) {
 		this.presencePenalty = presencePenalty;
 	}
 
+	/**
+	 * @param presencePenalty {@link #presencePenalty}
+	 * @return this
+	 */
 	public OpenAiChatParameters presencePenalty(final Double presencePenalty) {
 		this.setPresencePenalty(presencePenalty);
 		return this;
 	}
 
+	/**
+	 * @return {@link #temperature}
+	 */
 	public Integer getTemperature() {
 		return temperature;
 	}
 
+	/**
+	 * @param temperature {@link #temperature}
+	 */
 	public void setTemperature(final Integer temperature) {
 		this.temperature = temperature;
 	}
 
+	/**
+	 * @param temperature {@link #temperature}
+	 * @return this
+	 */
 	public OpenAiChatParameters temperature(final Integer temperature) {
 		this.setTemperature(temperature);
 		return this;
 	}
 
+	/**
+	 * copies parameter values from another instance of {@link OpenAiChatParameters}
+	 * 
+	 * @param parameters the source {@link OpenAiChatParameters}
+	 */
 	public void copyFrom(final OpenAiChatParameters parameters) {
 		this.setFrequencePenalty(parameters.getFrequencePenalty());
 		this.setLogitBias(parameters.getLogitBias());

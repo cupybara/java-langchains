@@ -16,8 +16,23 @@ import com.github.hakenadu.javalangchain.chains.llm.openai.OpenAiChatParameters;
  */
 public final class AzureOpenAiChatChain extends OpenAiChatChain {
 
+	/**
+	 * Name of the azure resource
+	 */
 	private final String resourceName;
+
+	/**
+	 * Name of the azure openai service deployment
+	 */
 	private final String deploymentName;
+
+	/**
+	 * The target API Version
+	 * <ul>
+	 * <li>https://learn.microsoft.com/en-us/azure/cognitive-services/openai/reference#rest-api-versioning</li>
+	 * <li>https://learn.microsoft.com/en-us/azure/cognitive-services/openai/reference#chat-completions</li>
+	 * </ul>
+	 */
 	private final String apiVersion;
 
 	/**

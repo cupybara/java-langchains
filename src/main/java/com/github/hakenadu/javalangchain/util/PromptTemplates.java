@@ -1,10 +1,14 @@
 package com.github.hakenadu.javalangchain.util;
 
 // @formatter:off
+
+/**
+ * this utility class holds templates for various prompts
+ */
 public final class PromptTemplates {
 
 	/**
-	 * @see https://github.com/hwchase17/langchain/blob/master/langchain/chains/qa_with_sources/map_reduce_prompt.py#L4
+	 * https://github.com/hwchase17/langchain/blob/master/langchain/chains/qa_with_sources/map_reduce_prompt.py#L4
 	 */
 	public static final String QA_SUMMARIZE = String.format(
 			  "Use the following portion of a long document to see if any of the text is relevant to answer the question.\n"
@@ -15,7 +19,7 @@ public final class PromptTemplates {
 		PromptConstants.QUESTION);
 	
 	/**
-	 * @see https://github.com/hwchase17/langchain/blob/master/langchain/chains/qa_with_sources/stuff_prompt.py#LL4C15-L38C13
+	 * https://github.com/hwchase17/langchain/blob/master/langchain/chains/qa_with_sources/stuff_prompt.py#LL4C15-L38C13
 	 */
 	public static final String QA_COMBINE = String.format(
 		      "Given the following extracted parts of a long document and a question, create a final answer with references (\"SOURCES\").\n"
@@ -53,7 +57,7 @@ public final class PromptTemplates {
 		PromptConstants.QUESTION, PromptConstants.CONTENT);
 	
 	/**
-	 * @see https://github.com/hwchase17/langchain/blob/master/langchain/chains/qa_with_sources/stuff_prompt.py#L41
+	 * https://github.com/hwchase17/langchain/blob/master/langchain/chains/qa_with_sources/stuff_prompt.py#L41
 	 */
 	public static final String QA_DOCUMENT = String.format("Content: ${%s}\nSource: ${%s}", PromptConstants.CONTENT, PromptConstants.SOURCE);
 	

@@ -19,14 +19,23 @@ import com.github.hakenadu.javalangchain.util.PromptTemplates;
 public class CombineDocumentsChain implements Chain<Stream<Map<String, String>>, Map<String, String>> {
 
 	/**
-	 * This 
+	 * The template for each single document which contains placeholders in the form
+	 * ${myPlaceholder} that are replaced for each the keys of each input document.
 	 */
 	private final String documentPromptTemplate;
 
+	/**
+	 * creates an instance of the {@link CombineDocumentsChain}
+	 * 
+	 * @param documentPromptTemplate {@link #documentPromptTemplate}
+	 */
 	public CombineDocumentsChain(final String documentPromptTemplate) {
 		this.documentPromptTemplate = documentPromptTemplate;
 	}
 
+	/**
+	 * creates an instance of the {@link CombineDocumentsChain}
+	 */
 	public CombineDocumentsChain() {
 		this(PromptTemplates.QA_DOCUMENT);
 	}

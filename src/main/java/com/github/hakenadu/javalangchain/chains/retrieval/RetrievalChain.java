@@ -15,10 +15,16 @@ public abstract class RetrievalChain implements Chain<String, Stream<Map<String,
 	 */
 	private final int maxDocumentCount;
 
+	/**
+	 * @param maxDocumentCount {@link #maxDocumentCount}
+	 */
 	protected RetrievalChain(final int maxDocumentCount) {
 		this.maxDocumentCount = maxDocumentCount;
 	}
 
+	/**
+	 * @return {@link #maxDocumentCount}
+	 */
 	protected final int getMaxDocumentCount() {
 		return this.maxDocumentCount;
 	}
