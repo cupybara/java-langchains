@@ -27,7 +27,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import com.github.hakenadu.javalangchain.util.PromptConstants;
+import com.github.hakenadu.javalangchains.chains.retrieval.lucene.LuceneRetrievalChain;
+import com.github.hakenadu.javalangchains.util.PromptConstants;
 
 /**
  * Tests for the {@link LuceneRetrievalChain}

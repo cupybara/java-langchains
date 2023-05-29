@@ -1,4 +1,4 @@
-package com.github.hakenadu.javalangchain.chains.llm.openai;
+package com.github.hakenadu.javalangchains.chains.llm.openai;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,7 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.hakenadu.javalangchain.chains.llm.LargeLanguageModelChain;
+import com.github.hakenadu.javalangchains.chains.llm.LargeLanguageModelChain;
 
 /**
  * {@link LargeLanguageModelChain} for usage with the OpenAI API

@@ -5,15 +5,15 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.github.hakenadu</groupId>
-	<artifactId>java-langchain</artifactId>
+	<artifactId>java-langchains</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<name>Java.langchain</name>
+	<name>Java.langchains</name>
 	<description>
 		A library which provides components to build LLM based applications in
 		Java
 	</description>
-	<url>https://github.com/Hakenadu/java-langchain</url>
+	<url>https://github.com/Hakenadu/java-langchains</url>
 
 	<licenses>
 		<license>
@@ -37,11 +37,12 @@
 	</developers>
 
 	<scm>
-		<connection>scm:git:git://github.com/Hakenadu/java-langchain.git</connection>
+		<connection>scm:git:git://github.com/Hakenadu/java-langchains.git</connection>
 		<developerConnection>
-			scm:git:ssh://github.com:Hakenadu/java-langchain.git
+			scm:git:ssh://github.com:Hakenadu/java-langchains.git
 		</developerConnection>
-		<url>https://github.com/Hakenadu/java-langchain/tree/master</url>
+		<url>https://github.com/Hakenadu/java-langchains/tree/master</url>
+		<tag>v0.0.1</tag>
 	</scm>
 
 	<distributionManagement>
@@ -76,7 +77,8 @@
 		<maven.scm.provider.gitexe.version>2.0.1</maven.scm.provider.gitexe.version>
 		<maven.source.plugin.version>3.3.0</maven.source.plugin.version>
 		<nexus.staging.maven.plugin.version>1.6.13</nexus.staging.maven.plugin.version>
-		<webflux.version>6.0.9</webflux.version>
+		<reactor.version>1.1.7</reactor.version>
+		<webflux.version>5.3.27</webflux.version>
 	</properties>
 
 	<profiles>
@@ -135,7 +137,8 @@
 					</checkModificationExcludes>
 					<pushChanges>false</pushChanges>
 					<mavenExecutorId>forked-path</mavenExecutorId>
-					<arguments>-Dgpg.passphrase=${gpg.passphrase} -Dmaven.test.skipTests=true</arguments>
+					<arguments>-Dgpg.passphrase=${gpg.passphrase}
+						-Dmaven.test.skipTests=true</arguments>
 				</configuration>
 				<dependencies>
 					<dependency>
@@ -215,6 +218,11 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webflux</artifactId>
 			<version>${webflux.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.projectreactor.netty</groupId>
+			<artifactId>reactor-netty</artifactId>
+			<version>${reactor.version}</version>
 		</dependency>
 
 		<!-- Stuff for future modularization -->

@@ -1,4 +1,4 @@
-package com.github.hakenadu.javalangchain.chains.llm.openai;
+package com.github.hakenadu.javalangchains.chains.llm.openai;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
-import com.github.hakenadu.javalangchain.chains.Chain;
+import com.github.hakenadu.javalangchains.chains.Chain;
 
 class OpenAiChatChainIT {
 

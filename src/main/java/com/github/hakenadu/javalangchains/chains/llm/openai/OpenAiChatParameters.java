@@ -1,4 +1,4 @@
-package com.github.hakenadu.javalangchain.chains.llm.openai;
+package com.github.hakenadu.javalangchains.chains.llm.openai;
 
 import java.util.Map;
 

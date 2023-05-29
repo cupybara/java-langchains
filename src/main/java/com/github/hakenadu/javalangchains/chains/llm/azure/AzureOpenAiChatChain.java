@@ -1,4 +1,4 @@
-package com.github.hakenadu.javalangchain.chains.llm.azure;
+package com.github.hakenadu.javalangchains.chains.llm.azure;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -7,9 +7,9 @@ import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.hakenadu.javalangchain.chains.llm.openai.OpenAiChatChain;
-import com.github.hakenadu.javalangchain.chains.llm.openai.OpenAiChatCompletionsRequest;
-import com.github.hakenadu.javalangchain.chains.llm.openai.OpenAiChatParameters;
+import com.github.hakenadu.javalangchains.chains.llm.openai.OpenAiChatChain;
+import com.github.hakenadu.javalangchains.chains.llm.openai.OpenAiChatCompletionsRequest;
+import com.github.hakenadu.javalangchains.chains.llm.openai.OpenAiChatParameters;
 
 /**
  * {@link OpenAiChatChain} adopted for usage of Azure OpenAI Services

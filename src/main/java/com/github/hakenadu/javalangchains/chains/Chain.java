@@ -1,4 +1,4 @@
-package com.github.hakenadu.javalangchain.chains;
+package com.github.hakenadu.javalangchains.chains;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

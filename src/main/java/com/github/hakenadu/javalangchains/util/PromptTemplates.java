@@ -1,4 +1,4 @@
-package com.github.hakenadu.javalangchain.util;
+package com.github.hakenadu.javalangchains.util;
 
 // @formatter:off
 

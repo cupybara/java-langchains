@@ -1,9 +1,9 @@
-package com.github.hakenadu.javalangchain.chains.retrieval;
+package com.github.hakenadu.javalangchains.chains.retrieval;
 
 import java.util.Map;
 import java.util.stream.Stream;
 
-import com.github.hakenadu.javalangchain.chains.Chain;
+import com.github.hakenadu.javalangchains.chains.Chain;
 
 /**
  * {@link Chain} which is utilized for retrieving documents in a QA context

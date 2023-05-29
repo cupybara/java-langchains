@@ -1,4 +1,4 @@
-package com.github.hakenadu.javalangchain.chains.retrieval;
+package com.github.hakenadu.javalangchains.chains.retrieval;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,9 +8,9 @@ import java.util.stream.Stream;
 
 import org.apache.commons.text.StringSubstitutor;
 
-import com.github.hakenadu.javalangchain.chains.Chain;
-import com.github.hakenadu.javalangchain.util.PromptConstants;
-import com.github.hakenadu.javalangchain.util.PromptTemplates;
+import com.github.hakenadu.javalangchains.chains.Chain;
+import com.github.hakenadu.javalangchains.util.PromptConstants;
+import com.github.hakenadu.javalangchains.util.PromptTemplates;
 
 /**
  * This {@link Chain} is used to combine multiple retrieved documents into one

@@ -16,16 +16,16 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import com.github.hakenadu.javalangchain.chains.Chain;
-import com.github.hakenadu.javalangchain.chains.llm.openai.OpenAiChatChain;
-import com.github.hakenadu.javalangchain.chains.llm.openai.OpenAiChatParameters;
-import com.github.hakenadu.javalangchain.chains.retrieval.AnswerWithSources;
-import com.github.hakenadu.javalangchain.chains.retrieval.CombineDocumentsChain;
-import com.github.hakenadu.javalangchain.chains.retrieval.MapAnswerWithSourcesChain;
-import com.github.hakenadu.javalangchain.chains.retrieval.SummarizeDocumentsChain;
-import com.github.hakenadu.javalangchain.chains.retrieval.lucene.LuceneRetrievalChain;
 import com.github.hakenadu.javalangchain.chains.retrieval.lucene.LuceneRetrievalChainTest;
-import com.github.hakenadu.javalangchain.util.PromptTemplates;
+import com.github.hakenadu.javalangchains.chains.Chain;
+import com.github.hakenadu.javalangchains.chains.llm.openai.OpenAiChatChain;
+import com.github.hakenadu.javalangchains.chains.llm.openai.OpenAiChatParameters;
+import com.github.hakenadu.javalangchains.chains.retrieval.AnswerWithSources;
+import com.github.hakenadu.javalangchains.chains.retrieval.CombineDocumentsChain;
+import com.github.hakenadu.javalangchains.chains.retrieval.MapAnswerWithSourcesChain;
+import com.github.hakenadu.javalangchains.chains.retrieval.SummarizeDocumentsChain;
+import com.github.hakenadu.javalangchains.chains.retrieval.lucene.LuceneRetrievalChain;
+import com.github.hakenadu.javalangchains.util.PromptTemplates;
 
 /**
  * tests for a complete qa {@link Chain}

@@ -1,8 +1,8 @@
-package com.github.hakenadu.javalangchain.chains.llm;
+package com.github.hakenadu.javalangchains.chains.llm;
 
 import java.util.Map;
 
-import com.github.hakenadu.javalangchain.chains.Chain;
+import com.github.hakenadu.javalangchains.chains.Chain;
 
 /**
  * Parent of all {@link Chain Chains} which allow passing input to a large

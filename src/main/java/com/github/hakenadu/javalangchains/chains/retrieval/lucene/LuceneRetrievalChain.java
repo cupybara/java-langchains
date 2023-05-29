@@ -1,4 +1,4 @@
-package com.github.hakenadu.javalangchain.chains.retrieval.lucene;
+package com.github.hakenadu.javalangchains.chains.retrieval.lucene;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -22,8 +22,8 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.store.Directory;
 
-import com.github.hakenadu.javalangchain.chains.retrieval.RetrievalChain;
-import com.github.hakenadu.javalangchain.util.PromptConstants;
+import com.github.hakenadu.javalangchains.chains.retrieval.RetrievalChain;
+import com.github.hakenadu.javalangchains.util.PromptConstants;
 
 /**
  * This {@link RetrievalChain} retrieves documents from a lucene index

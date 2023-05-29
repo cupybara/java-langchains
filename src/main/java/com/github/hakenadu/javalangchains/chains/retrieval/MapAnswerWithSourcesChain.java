@@ -1,9 +1,9 @@
-package com.github.hakenadu.javalangchain.chains.retrieval;
+package com.github.hakenadu.javalangchains.chains.retrieval;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import com.github.hakenadu.javalangchain.chains.Chain;
+import com.github.hakenadu.javalangchains.chains.Chain;
 
 /**
  * Splits answers with sources from a QA chain.
