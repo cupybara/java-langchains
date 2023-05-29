@@ -15,6 +15,10 @@ import org.apache.logging.log4j.Logger;
  */
 @FunctionalInterface
 public interface Chain<I, O> {
+
+	/**
+	 * The default {@link Logger} for {@link Chain Chains}
+	 */
 	static Logger LOGGER = LogManager.getLogger();
 
 	/**

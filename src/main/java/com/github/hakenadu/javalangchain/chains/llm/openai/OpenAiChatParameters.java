@@ -7,13 +7,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Parameters for calling an OpenAI Chat Model
  * 
- * @see https://platform.openai.com/docs/api-reference/chat/create
+ * https://platform.openai.com/docs/api-reference/chat/create
  */
 public class OpenAiChatParameters {
 
 	/**
-	 * <h1>From
-	 * https://github.com/openai/openai-openapi/blob/master/openapi.yaml</h1>
+	 * <h2>From
+	 * https://github.com/openai/openai-openapi/blob/master/openapi.yaml</h2>
 	 * 
 	 * Number between -2.0 and 2.0. Positive values penalize new tokens based on
 	 * their existing frequency in the text so far, decreasing the model's
@@ -23,8 +23,8 @@ public class OpenAiChatParameters {
 	private Double frequencePenalty;
 
 	/**
-	 * <h1>From
-	 * https://github.com/openai/openai-openapi/blob/master/openapi.yaml</h1>
+	 * <h2>From
+	 * https://github.com/openai/openai-openapi/blob/master/openapi.yaml</h2>
 	 * 
 	 * Modify the likelihood of specified tokens appearing in the completion.
 	 * Accepts a json object that maps tokens (specified by their token ID in the
@@ -37,8 +37,8 @@ public class OpenAiChatParameters {
 	private Map<Integer, Integer> logitBias;
 
 	/**
-	 * <h1>From
-	 * https://github.com/openai/openai-openapi/blob/master/openapi.yaml</h1>
+	 * <h2>From
+	 * https://github.com/openai/openai-openapi/blob/master/openapi.yaml</h2>
 	 * 
 	 * The maximum number of tokens allowed for the generated answer. By default,
 	 * the number of tokens the model can return will be (4096 - prompt tokens).
@@ -47,8 +47,8 @@ public class OpenAiChatParameters {
 	private Integer maxTokens;
 
 	/**
-	 * <h1>From
-	 * https://github.com/openai/openai-openapi/blob/master/openapi.yaml</h1>
+	 * <h2>From
+	 * https://github.com/openai/openai-openapi/blob/master/openapi.yaml</h2>
 	 * 
 	 * ID of the model to use. Currently, only `gpt-3.5-turbo` and
 	 * `gpt-3.5-turbo-0301` are supported.
@@ -56,8 +56,8 @@ public class OpenAiChatParameters {
 	private String model;
 
 	/**
-	 * <h1>From
-	 * https://github.com/openai/openai-openapi/blob/master/openapi.yaml</h1>
+	 * <h2>From
+	 * https://github.com/openai/openai-openapi/blob/master/openapi.yaml</h2>
 	 * 
 	 * How many completions to generate for each prompt.
 	 **
@@ -68,8 +68,8 @@ public class OpenAiChatParameters {
 	@JsonProperty
 	private Integer n;
 	/**
-	 * <h1>From
-	 * https://github.com/openai/openai-openapi/blob/master/openapi.yaml</h1>
+	 * <h2>From
+	 * https://github.com/openai/openai-openapi/blob/master/openapi.yaml</h2>
 	 * 
 	 * Number between -2.0 and 2.0. Positive values penalize new tokens based on
 	 * whether they appear in the text so far, increasing the model's likelihood to
@@ -79,8 +79,8 @@ public class OpenAiChatParameters {
 	private Double presencePenalty;
 
 	/**
-	 * <h1>From
-	 * https://github.com/openai/openai-openapi/blob/master/openapi.yaml</h1>
+	 * <h2>From
+	 * https://github.com/openai/openai-openapi/blob/master/openapi.yaml</h2>
 	 * 
 	 * What sampling temperature to use, between 0 and 2. Higher values like 0.8
 	 * will make the output more random, while lower values like 0.2 will make it

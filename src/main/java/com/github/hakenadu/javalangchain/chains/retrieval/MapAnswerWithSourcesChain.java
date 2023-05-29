@@ -8,7 +8,7 @@ import com.github.hakenadu.javalangchain.chains.Chain;
 /**
  * Splits answers with sources from a QA chain.
  * 
- * <h1>Examples</h1>
+ * <h2>Examples</h2>
  * 
  * <pre>
  *  I don't know who James Anderson is.

@@ -12,8 +12,15 @@ import com.github.hakenadu.javalangchain.chains.Chain;
 import com.github.hakenadu.javalangchain.util.PromptConstants;
 import com.github.hakenadu.javalangchain.util.PromptTemplates;
 
+/**
+ * This {@link Chain} is used to combine multiple retrieved documents into one
+ * prompt which can then be used to target a LLM in subsequent steps.
+ */
 public class CombineDocumentsChain implements Chain<Stream<Map<String, String>>, Map<String, String>> {
 
+	/**
+	 * This 
+	 */
 	private final String documentPromptTemplate;
 
 	public CombineDocumentsChain(final String documentPromptTemplate) {

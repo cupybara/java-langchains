@@ -18,16 +18,46 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.hakenadu.javalangchain.chains.llm.LargeLanguageModelChain;
 
 /**
- * {@link LargeLanguageModelChain} 
+ * {@link LargeLanguageModelChain} for usage with the OpenAI API
  */
 public class OpenAiChatChain extends LargeLanguageModelChain {
 
+	/**
+	 * The template for the system role which contains placeholders in the form
+	 * ${myPlaceholder} that are replaced for input documents before creating a
+	 * request to a LLM.
+	 */
 	private final String systemTemplate;
+
+	/**
+	 * The {@link OpenAiChatParameters} allows to finetune requests to the OpenAI
+	 * API
+	 */
 	private final OpenAiChatParameters parameters;
+
+	/**
+	 * The API-Key used for Authentication
+	 */
 	private final String apiKey;
+
+	/**
+	 * The {@link ObjectMapper} used for body serialization and deserialization
+	 */
 	private final ObjectMapper objectMapper;
+
+	/**
+	 * The {@link WebClient} used for executing requests to the OpenAI API
+	 */
 	private final WebClient webClient;
 
+	/**
+	 * @param promptTemplate {@link #getPromptTemplate()}
+	 * @param parameters     {@link #parameters}r
+	 * @param apiKey         {@link #apiKey}
+	 * @param systemTemplate {@link #systemTemplate}
+	 * @param objectMapper   {@link #objectMapper}
+	 * @param webClient      {@link #webClient}
+	 */
 	public OpenAiChatChain(final String promptTemplate, final OpenAiChatParameters parameters, final String apiKey,
 			final String systemTemplate, final ObjectMapper objectMapper, final WebClient webClient) {
 		super(promptTemplate);
@@ -38,15 +68,35 @@ public class OpenAiChatChain extends LargeLanguageModelChain {
 		this.webClient = webClient;
 	}
 
+	/**
+	 * @param promptTemplate {@link #getPromptTemplate()}
+	 * @param parameters     {@link #parameters}
+	 * @param apiKey         {@link #apiKey}
+	 * @param systemTemplate {@link #systemTemplate}s
+	 */
 	public OpenAiChatChain(final String promptTemplate, final OpenAiChatParameters parameters, final String apiKey,
 			final String systemTemplate) {
 		this(promptTemplate, parameters, apiKey, systemTemplate, createDefaultObjectMapper(), createDefaultWebClient());
 	}
 
+	/**
+	 * @param promptTemplate {@link #getPromptTemplate()}
+	 * @param parameters     {@link #parameters}
+	 * @param apiKey         {@link #apiKey}
+	 */
 	public OpenAiChatChain(final String promptTemplate, final OpenAiChatParameters parameters, final String apiKey) {
 		this(promptTemplate, parameters, apiKey, null);
 	}
 
+	/**
+	 * executes the request to the OpenAI API. Protected so that it may be
+	 * overridden for other OpenAI API Providers.
+	 * 
+	 * @param request      the {@link OpenAiChatCompletionsRequest}
+	 * @param webClient    the {@link WebClient} to use for the request
+	 * @param objectMapper the {@link ObjectMapper} used for body serialization
+	 * @return the {@link ResponseSpec}
+	 */
 	protected ResponseSpec createResponseSpec(final OpenAiChatCompletionsRequest request, final WebClient webClient,
 			final ObjectMapper objectMapper) {
 		return this.webClient.post()
@@ -80,6 +130,13 @@ public class OpenAiChatChain extends LargeLanguageModelChain {
 		return request;
 	}
 
+	/**
+	 * Serializes the {@link OpenAiChatCompletionsRequest}
+	 * 
+	 * @param request      {@link OpenAiChatCompletionsRequest} to serialize
+	 * @param objectMapper {@link ObjectMapper} used for serialization
+	 * @return serialized {@link OpenAiChatCompletionsRequest}
+	 */
 	protected String requestToBody(final OpenAiChatCompletionsRequest request, final ObjectMapper objectMapper) {
 		try {
 			return objectMapper.writeValueAsString(request);
@@ -97,14 +154,23 @@ public class OpenAiChatChain extends LargeLanguageModelChain {
 		}
 	}
 
+	/**
+	 * @return {@link #apiKey}p
+	 */
 	protected final String getApiKey() {
 		return apiKey;
 	}
 
+	/**
+	 * @return a default configured {@link ObjectMapper}
+	 */
 	public static ObjectMapper createDefaultObjectMapper() {
 		return new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
 	}
 
+	/**
+	 * @return a default configured {@link WebClient}
+	 */
 	public static WebClient createDefaultWebClient() {
 		return WebClient.create();
 	}

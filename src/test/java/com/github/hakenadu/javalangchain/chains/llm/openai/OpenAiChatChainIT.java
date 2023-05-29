@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import com.github.hakenadu.javalangchain.chains.Chain;
 
-class OpenAiChatChainTest {
+class OpenAiChatChainIT {
 
 	private static final Logger LOGGER = LogManager.getLogger();
 

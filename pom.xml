@@ -69,7 +69,13 @@
 		<junit.jupiter.version>5.9.3</junit.jupiter.version>
 		<log4j.version>2.20.0</log4j.version>
 		<lucene.version>8.10.1</lucene.version>
+		<maven.deploy.plugin.version>3.1.0</maven.deploy.plugin.version>
 		<maven.gpg.plugin.version>3.1.0</maven.gpg.plugin.version>
+		<maven.javadoc.plugin.version>3.5.0</maven.javadoc.plugin.version>
+		<maven.release.plugin.version>3.0.0</maven.release.plugin.version>
+		<maven.scm.provider.gitexe.version>2.0.1</maven.scm.provider.gitexe.version>
+		<maven.source.plugin.version>3.3.0</maven.source.plugin.version>
+		<nexus.staging.maven.plugin.version>1.6.13</nexus.staging.maven.plugin.version>
 		<webflux.version>6.0.9</webflux.version>
 	</properties>
 
@@ -102,6 +108,82 @@
 			</build>
 		</profile>
 	</profiles>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>${maven.deploy.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>default-deploy</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>deploy</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>${maven.release.plugin.version}</version>
+				<configuration>
+					<localCheckout>true</localCheckout>
+					<checkModificationExcludes>
+						<checkModificationExclude>pom.xml</checkModificationExclude>
+					</checkModificationExcludes>
+					<pushChanges>false</pushChanges>
+					<mavenExecutorId>forked-path</mavenExecutorId>
+					<arguments>-Dgpg.passphrase=${gpg.passphrase} -Dmaven.test.skipTests=true</arguments>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.scm</groupId>
+						<artifactId>maven-scm-provider-gitexe</artifactId>
+						<version>${maven.scm.provider.gitexe.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>${nexus.staging.maven.plugin.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>ossrh</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>true</autoReleaseAfterClose>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>${maven.source.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${maven.javadoc.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 	<dependencies>
 		<dependency>

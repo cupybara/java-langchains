@@ -30,7 +30,7 @@ import com.github.hakenadu.javalangchain.util.PromptTemplates;
 /**
  * tests for a complete qa {@link Chain}
  */
-class RetrievalQaTest {
+class RetrievalQaIT {
 
 	private static Path tempDirPath;
 	private static Directory directory;

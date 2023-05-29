@@ -10,4 +10,4 @@ This provides an easy way to modularize the application and enables us to reuse 
 **W. I. P.**
 
 ### Retrieval based QA with sources
-The one for which this project was created. Take a look at [RetrievalQaTest](src/test/java/com/github/hakenadu/javalangchain/chains/qa/RetrievalQaTest.java) for an example using the [LuceneRetrievalChain](src/main/java/com/github/hakenadu/javalangchain/chains/retrieval/lucene/LuceneRetrievalChain.java) for document retrieval and the [OpenAiChatChain](src/main/java/com/github/hakenadu/javalangchain/chains/llm/openai/OpenAiChatChain.java) for summarization and combined processing of relevant documents.
+The one for which this project was created. Take a look at [RetrievalQaIT](src/test/java/com/github/hakenadu/javalangchain/chains/qa/RetrievalQaIT.java) for an example using the [LuceneRetrievalChain](src/main/java/com/github/hakenadu/javalangchain/chains/retrieval/lucene/LuceneRetrievalChain.java) for document retrieval and the [OpenAiChatChain](src/main/java/com/github/hakenadu/javalangchain/chains/llm/openai/OpenAiChatChain.java) for summarization and combined processing of relevant documents.
