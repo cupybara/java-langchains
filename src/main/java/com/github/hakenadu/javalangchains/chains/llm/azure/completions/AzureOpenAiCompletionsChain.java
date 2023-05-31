@@ -48,9 +48,9 @@ public final class AzureOpenAiCompletionsChain extends OpenAiCompletionsChain {
 	}
 
 	/**
-	 * @param resourceName   {@link #resourceName}
-	 * @param deploymentName {@link #deploymentName}
-	 * @param apiVersion     {@link #apiVersion}
+	 * @param resourceName   Name of the azure resource
+	 * @param deploymentName Name of the azure openai service deployment
+	 * @param apiVersion     The target API Version
 	 * @param promptTemplate The template which contains placeholders in the form
 	 *                       ${myPlaceholder} that are replaced for input documents
 	 *                       before creating a request to a LLM.

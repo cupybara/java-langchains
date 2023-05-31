@@ -11,7 +11,7 @@ public final class OpenAiCompletionsRequest extends OpenAiCompletionsParameters 
 	private final String prompt;
 
 	/**
-	 * @param messages {@link #prompt}
+	 * @param prompt {@link #prompt}
 	 */
 	public OpenAiCompletionsRequest(final String prompt) {
 		this.prompt = prompt;
