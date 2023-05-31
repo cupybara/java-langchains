@@ -1,11 +1,11 @@
-package com.github.hakenadu.javalangchains.chains.llm.openai;
+package com.github.hakenadu.javalangchains.chains.llm.openai.chat;
 
 import java.util.List;
 
 /**
  * Model class for the OpenAI /chat/completions request body
  */
-public final class OpenAiChatCompletionsRequest extends OpenAiChatParameters {
+public final class OpenAiChatCompletionsRequest extends OpenAiChatCompletionsParameters {
 
 	/**
 	 * The {@link OpenAiChatMessage} instances of the conversation

@@ -1,4 +1,4 @@
-package com.github.hakenadu.javalangchains.chains.llm.openai;
+package com.github.hakenadu.javalangchains.chains.llm.openai.completions;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -12,36 +12,39 @@ import org.junit.jupiter.api.Test;
 
 import com.github.hakenadu.javalangchains.chains.Chain;
 
-class OpenAiChatChainIT {
+/**
+ * Integration Tests for the {@link OpenAiCompletionsChain}
+ */
+class OpenAiCompletionsChainIT {
 
 	private static final Logger LOGGER = LogManager.getLogger();
 
 	@Test
 	void testRun() {
-		final OpenAiChatParameters parameters = new OpenAiChatParameters();
-		parameters.setModel("gpt-3.5-turbo");
+		final OpenAiCompletionsParameters parameters = new OpenAiCompletionsParameters();
+		parameters.setModel("text-davinci-003");
 
-		final OpenAiChatChain chain = new OpenAiChatChain("Hello, this is ${name}. What was my name again?", parameters,
-				System.getenv("OPENAI_API_KEY"));
+		final OpenAiCompletionsChain chain = new OpenAiCompletionsChain(
+				"Hello, this is ${name}. What was my name again?", parameters, System.getenv("OPENAI_API_KEY"));
 
 		final String name = "Manuel";
 		final String result = chain.run(Collections.singletonMap("name", name));
 		LOGGER.info(result);
 
-		assertNotNull(result, "got no result from OpenAiChatChainLink");
+		assertNotNull(result, "got no result from OpenAiCompletionsChain");
 		assertTrue(result.contains(name), "The answer did not contain the name");
 	}
 
 	@Test
 	void testChainedRun() {
-		final OpenAiChatParameters parameters = new OpenAiChatParameters();
-		parameters.setModel("gpt-3.5-turbo");
+		final OpenAiCompletionsParameters parameters = new OpenAiCompletionsParameters();
+		parameters.setModel("text-davinci-003");
 
-		final Chain<Map<String, String>, String> chain = new OpenAiChatChain(
+		final Chain<Map<String, String>, String> chain = new OpenAiCompletionsChain(
 				"Hello, this is ${name}. What is your name?", parameters, System.getenv("OPENAI_API_KEY"))
 				.chain(prev -> Collections.singletonMap("result", prev))
-				.chain(new OpenAiChatChain("What was the question for the following answer: ${result}", parameters,
-						System.getenv("OPENAI_API_KEY")));
+				.chain(new OpenAiCompletionsChain("What was the question for the following answer: ${result}",
+						parameters, System.getenv("OPENAI_API_KEY")));
 
 		final String result = chain.run(Collections.singletonMap("name", "Manuel"));
 		LOGGER.info(result);

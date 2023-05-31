@@ -17,8 +17,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import com.github.hakenadu.javalangchains.chains.Chain;
-import com.github.hakenadu.javalangchains.chains.llm.openai.OpenAiChatChain;
-import com.github.hakenadu.javalangchains.chains.llm.openai.OpenAiChatParameters;
+import com.github.hakenadu.javalangchains.chains.llm.openai.chat.OpenAiChatCompletionsChain;
+import com.github.hakenadu.javalangchains.chains.llm.openai.chat.OpenAiChatCompletionsParameters;
 import com.github.hakenadu.javalangchains.chains.retrieval.AnswerWithSources;
 import com.github.hakenadu.javalangchains.chains.retrieval.CombineDocumentsChain;
 import com.github.hakenadu.javalangchains.chains.retrieval.MapAnswerWithSourcesChain;
@@ -50,7 +50,7 @@ class RetrievalQaIT {
 
 	@Test
 	public void testQa() throws IOException {
-		final OpenAiChatParameters openAiChatParameters = new OpenAiChatParameters().temperature(0)
+		final OpenAiChatCompletionsParameters openAiChatParameters = new OpenAiChatCompletionsParameters().temperature(0)
 				.model("gpt-3.5-turbo");
 
 		/*
@@ -64,7 +64,7 @@ class RetrievalQaIT {
 			 * contain the most relevant information. This is achieved using an OpenAI LLM
 			 * (gpt-3.5-turbo in this case)
 			 */
-			final SummarizeDocumentsChain summarizeDocumentsChain = new SummarizeDocumentsChain(new OpenAiChatChain(
+			final SummarizeDocumentsChain summarizeDocumentsChain = new SummarizeDocumentsChain(new OpenAiChatCompletionsChain(
 					PromptTemplates.QA_SUMMARIZE, openAiChatParameters, System.getenv("OPENAI_API_KEY")));
 
 			/*
@@ -77,7 +77,7 @@ class RetrievalQaIT {
 			 * Chain 4: The openAiChatChain is used to process the combined prompt using an
 			 * OpenAI LLM (gpt-3.5-turbo in this case)
 			 */
-			final OpenAiChatChain openAiChatChain = new OpenAiChatChain(PromptTemplates.QA_COMBINE,
+			final OpenAiChatCompletionsChain openAiChatChain = new OpenAiChatCompletionsChain(PromptTemplates.QA_COMBINE,
 					openAiChatParameters, System.getenv("OPENAI_API_KEY"));
 
 			/*

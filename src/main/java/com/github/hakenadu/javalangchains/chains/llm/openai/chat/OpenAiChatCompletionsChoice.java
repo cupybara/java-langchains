@@ -1,4 +1,4 @@
-package com.github.hakenadu.javalangchains.chains.llm.openai;
+package com.github.hakenadu.javalangchains.chains.llm.openai.chat;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonCreator.Mode;
