@@ -35,18 +35,18 @@ import com.github.hakenadu.javalangchains.util.PromptConstants;
 public class LuceneRetrievalChainTest {
 
 	// @formatter:off
-	private static final String DOCUMENT_1 = 
-			  "Subject: John Doe's Biography\n" 
+	private static final String DOCUMENT_1 =
+			  "Subject: John Doe's Biography\n"
 		    + "Dear Reader,\n"
 			+ "I am delighted to present to you the biography of John Doe, a remarkable individual who has left an indelible mark on society. Born and raised in a small town, John displayed an insatiable curiosity and a thirst for knowledge from a young age. He excelled academically, earning scholarships that allowed him to attend prestigious universities and pursue his passion for scientific research.\n"
 			+ "Throughout his career, John made groundbreaking discoveries in the field of medicine, revolutionizing treatment options for previously incurable diseases. His relentless dedication and tireless efforts have saved countless lives and earned him numerous accolades, including the Nobel Prize in Medicine.\n"
 			+ "However, John's impact extends far beyond his professional accomplishments. He is known for his philanthropic endeavors, establishing charitable foundations that provide support and opportunities to underprivileged communities. John's compassion and commitment to social justice have inspired many to follow in his footsteps.\n"
 			+ "In his personal life, John is a devoted family man. He cherishes the time spent with his loving wife and children, always prioritizing their well-being amidst his demanding schedule. Despite his remarkable success, John remains humble and grounded, never forgetting his roots and always seeking ways to uplift those around him.\n"
 			+ "In conclusion, John Doe is not only a brilliant scientist and humanitarian but also a role model for future generations. His unwavering determination, kindness, and pursuit of excellence make him a true legend.\n"
-			+ "Sincerely,\n" 
+			+ "Sincerely,\n"
 			+ "Jane Doe";
-	
-	private static final String DOCUMENT_2 = 
+
+	private static final String DOCUMENT_2 =
 			  "Subject: Invitation to John Doe's Art Exhibition\n"
 			+ "Dear Art Enthusiast,\n"
 			+ "We are pleased to invite you to a remarkable art exhibition featuring the mesmerizing works of John Doe. Renowned for his unique style and ability to capture the essence of emotions on canvas, John has curated a collection that will leave you awe-struck.\n"
@@ -55,8 +55,8 @@ public class LuceneRetrievalChainTest {
 			+ "Kindly RSVP by [RSVP date] to ensure your attendance at this exclusive event. We look forward to your presence and sharing this unforgettable artistic journey with you.\n"
 			+ "Yours sincerely,\n"
 			+ "Jane Doe";
-	
-	private static final String DOCUMENT_3 = 
+
+	private static final String DOCUMENT_3 =
 			  "Subject: John Doe's Travel Memoir - Exploring the Unknown\n"
 			+ "Dear Adventurers,\n"
 			+ "Prepare to embark on an extraordinary journey as we delve into the captivating travel memoir of John Doe. Throughout his life, John has traversed the globe, seeking out the hidden gems and immersing himself in diverse cultures. His memoir is a testament to the transformative power of travel and the profound impact it can have on one's perspective.\n"
@@ -78,17 +78,16 @@ public class LuceneRetrievalChainTest {
 		fillDirectory(directory);
 	}
 
-	public static void fillDirectory(final Directory directory) throws IOException {
+	public static void fillDirectory(final Directory indexDirectory) throws IOException {
 		final StandardAnalyzer analyzer = new StandardAnalyzer();
 		final IndexWriterConfig config = new IndexWriterConfig(analyzer);
-		try (final IndexWriter indexWriter = new IndexWriter(directory, config)) {
+		try (final IndexWriter indexWriter = new IndexWriter(indexDirectory, config)) {
 			final List<String> documents = Arrays.asList(DOCUMENT_1, DOCUMENT_2, DOCUMENT_3);
 
 			for (final String content : documents) {
 				final Document doc = new Document();
 				doc.add(new TextField(PromptConstants.CONTENT, content, Field.Store.YES));
-				doc.add(new StringField(PromptConstants.SOURCE, String.valueOf(documents.indexOf(content) + 1),
-						Field.Store.YES));
+				doc.add(new StringField(PromptConstants.SOURCE, String.valueOf(documents.indexOf(content) + 1), Field.Store.YES));
 				indexWriter.addDocument(doc);
 			}
 
@@ -107,8 +106,7 @@ public class LuceneRetrievalChainTest {
 		try (final LuceneRetrievalChain retrievalChain = new LuceneRetrievalChain(directory, 2)) {
 			final String question = "what kind of art does john make?";
 
-			final List<Map<String, String>> documents = retrievalChain.run(question)
-					.collect(Collectors.toUnmodifiableList());
+			final List<Map<String, String>> documents = retrievalChain.run(question).collect(Collectors.toList());
 			assertFalse(documents.isEmpty(), "no documents retrieved");
 
 			final Map<String, String> mostRelevantDocument = documents.get(0);
