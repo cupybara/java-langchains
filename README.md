@@ -60,7 +60,7 @@ String result = chain.run(Collections.singletonMap("name", "Manuel")); // output
 ```java
 AzureOpenAiCompletionsChain chain = new AzureOpenAiCompletionsChain(
 	"my-azure-resource-name",
-	"gpt-35-turbo", // deployment name
+	"text-davinci-003", // deployment name
 	"2023-05-15", // api version
 	"Hello, this is ${name}", 
 	new OpenAiCompletionsParameters(),
@@ -152,9 +152,63 @@ Stream<Map<String, String>> summarizedDocuments = summarizeDocumentsChain.run(do
 ```
 
 ## Use Cases
+Multiple chains can be chained together to create more powerful chains for complex use cases.
 
 ### Retrieval Question-Answering Chain 
 The [following integration test](src/test/java/com/github/hakenadu/javalangchains/chains/qa/RetrievalQaIT.java) provides a comprehensive solution for an information retrieval and summarization task, with the aim to provide concise, informative and relevant answers from a large set of documents. It combines multiple processes into a Question-Answering (QA) chain, each responsible for a specific task.
+
+```java
+OpenAiChatCompletionsParameters openAiChatParameters = new OpenAiChatCompletionsParameters()
+		.temperature(0)
+		.model("gpt-3.5-turbo");
+
+/*
+ * Chain 1: The retrievalChain is used to retrieve relevant documents from an
+ * index by using bm25 similarity
+ */
+try (LuceneRetrievalChain retrievalChain = new LuceneRetrievalChain(directory /* implies a filled lucene directory */, 2)) {
+
+	/*
+	 * Chain 2: The summarizeDocumentsChain is used to summarize documents to only
+	 * contain the most relevant information. This is achieved using an OpenAI LLM
+	 * (gpt-3.5-turbo in this case)
+	 */
+	SummarizeDocumentsChain summarizeDocumentsChain = new SummarizeDocumentsChain(new OpenAiChatCompletionsChain(
+			PromptTemplates.QA_SUMMARIZE, openAiChatParameters, System.getenv("OPENAI_API_KEY")));
+
+	/*
+	 * Chain 3: The combineDocumentsChain is used to combine the retrieved documents
+	 * in a single prompt
+	 */
+	CombineDocumentsChain combineDocumentsChain = new CombineDocumentsChain();
+
+	/*
+	 * Chain 4: The openAiChatChain is used to process the combined prompt using an
+	 * OpenAI LLM (gpt-3.5-turbo in this case)
+	 */
+	OpenAiChatCompletionsChain openAiChatChain = new OpenAiChatCompletionsChain(PromptTemplates.QA_COMBINE,
+			openAiChatParameters, System.getenv("OPENAI_API_KEY"));
+
+	/*
+	 * Chain 5: The mapAnswerWithSourcesChain is used to map the llm string output
+	 * to a complex object using a regular expression which splits the sources and
+	 * the answer.
+	 */
+	MapAnswerWithSourcesChain mapAnswerWithSourcesChain = new MapAnswerWithSourcesChain();
+
+	// we combine all chain links into a self contained QA chain
+	Chain<String, AnswerWithSources> qaChain = retrievalChain.chain(summarizeDocumentsChain)
+			.chain(combineDocumentsChain).chain(openAiChatChain).chain(mapAnswerWithSourcesChain);
+
+	// the QA chain can now be called with a question and delivers an answer
+	final AnswerWithSources answerWithSources = qaChain.run("who is john doe?");
+	
+	/*
+	 * answerWithSources.getAnwswer() provides the answer to the question based on the retrieved documents
+	 * answerWithSources.getSources() provides a list of source strings for the retrieved documents
+	 */
+}
+```
 
 The QA chain performs the following tasks:
 
