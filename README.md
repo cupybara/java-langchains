@@ -11,6 +11,10 @@
         - [OpenAI](#openai)
             - [OpenAI Chat](#openai-chat)
             - [OpenAI Completions](#openai-completions)
+    - [Retrieval](#retrieval)
+        - [LuceneRetrievalChain](#luceneretrievalchain)
+    - [Summarization](#summarization)
+        - [SummarizeDocumentsChain](#summarizedocumentschain)
 - [Use Cases](#use-cases)
     - [Retrieval Question-Answering Chain](#retrieval-question-answering-chain)
 
