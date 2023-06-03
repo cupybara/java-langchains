@@ -13,8 +13,10 @@
             - [OpenAI Completions](#openai-completions)
     - [Retrieval](#retrieval)
         - [LuceneRetrievalChain](#luceneretrievalchain)
-    - [Summarization](#summarization)
+    - [QA](#qa)
         - [SummarizeDocumentsChain](#summarizedocumentschain)
+        - [CombineDocumentsChain](#combinedocumentschain)
+        - [MapAnswerWithSourcesChain](#mapanswerwithsourceschain)
 - [Use Cases](#use-cases)
     - [Retrieval Question-Answering Chain](#retrieval-question-answering-chain)
 
@@ -122,7 +124,7 @@ RetrievalChain retrievalChain = new LuceneRetrievalChain(directory, 2 /* max cou
 Stream<Map<String, String>> retrievedDocuments = retrievalChain.run("my question?");
 ```
 
-### Summarization
+### QA
 
 #### SummarizeDocumentsChain
 ```java
@@ -149,6 +151,43 @@ Stream<Map<String, String>> documents = Stream.of(myFirstDocument, mySecondDocum
 
 // output contains the passed documents with summarized content-Value
 Stream<Map<String, String>> summarizedDocuments = summarizeDocumentsChain.run(documents);
+```
+
+#### CombineDocumentsChain
+```java
+CombineDocumentsChain combineDocumentsChain = new CombineDocumentsChain();
+
+Map<String, String> myFirstDocument = new HashMap<String, String>();
+myFirstDocument.put(PromptConstants.CONTENT, "this is my first document content");
+myFirstDocument.put(PromptConstants.SOURCE, "this is my first document source");
+
+Map<String, String> mySecondDocument = new HashMap<String, String>();
+mySecondDocument.put(PromptConstants.CONTENT, "this is my second document content");
+mySecondDocument.put(PromptConstants.SOURCE, "this is my second document source");
+
+Stream<Map<String, String>> documents = Stream.of(myFirstDocument, mySecondDocument);
+
+Map<String, String> combinedDocument = combineDocumentsChain.run(documents);
+/* 
+ * Content: this is my first document content
+ * Source: this is my first document source
+ *
+ * Content: this is my second document content
+ * Source: this is my second document source
+ * 
+ * (stored with key "content" inside the map)
+ */
+```
+
+#### MapAnswerWithSourcesChain
+```java
+MapAnswerWithSourcesChain mapAnswerWithSourcesChain = new MapAnswerWithSourcesChain();
+
+AnswerWithSources answerWithSources = mapAnswerWithSourcesChain.run("The answer is bla bla bla.\nSOURCES: page 1 book xy, page 2 book ab");
+
+System.out.println(answerWithSources.getAnswer());  // The answer is bla bla bla.
+System.out.println(answerWithSources.getSources()); // [page 1 book xy, page 2 book ab]
+
 ```
 
 ## Use Cases
@@ -201,7 +240,7 @@ try (LuceneRetrievalChain retrievalChain = new LuceneRetrievalChain(directory /*
 			.chain(combineDocumentsChain).chain(openAiChatChain).chain(mapAnswerWithSourcesChain);
 
 	// the QA chain can now be called with a question and delivers an answer
-	final AnswerWithSources answerWithSources = qaChain.run("who is john doe?");
+	AnswerWithSources answerWithSources = qaChain.run("who is john doe?");
 	
 	/*
 	 * answerWithSources.getAnwswer() provides the answer to the question based on the retrieved documents
