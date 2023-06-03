@@ -234,8 +234,11 @@ try (LuceneRetrievalChain retrievalChain = new LuceneRetrievalChain(directory /*
 	MapAnswerWithSourcesChain mapAnswerWithSourcesChain = new MapAnswerWithSourcesChain();
 
 	// we combine all chain links into a self contained QA chain
-	Chain<String, AnswerWithSources> qaChain = retrievalChain.chain(summarizeDocumentsChain)
-			.chain(combineDocumentsChain).chain(openAiChatChain).chain(mapAnswerWithSourcesChain);
+	Chain<String, AnswerWithSources> qaChain = retrievalChain
+		.chain(summarizeDocumentsChain)
+		.chain(combineDocumentsChain)
+		.chain(openAiChatChain)
+		.chain(mapAnswerWithSourcesChain);
 
 	// the QA chain can now be called with a question and delivers an answer
 	AnswerWithSources answerWithSources = qaChain.run("who is john doe?");
