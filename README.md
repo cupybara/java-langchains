@@ -1,6 +1,8 @@
 # ![](misc/logo.svg)
 
-- [Introduction](#introduction)
+This repository aims to provide a java alternative to [hwchase17/langchain](https://github.com/hwchase17/langchain).
+It was born from the need to create an enterprise QA application.
+
 - [Dependency](#dependency)
 - [Base Concept](#base-concept)
 - [Chains](#chains)
@@ -19,10 +21,6 @@
         - [MapAnswerWithSourcesChain](#mapanswerwithsourceschain)
 - [Use Cases](#use-cases)
     - [Retrieval Question-Answering Chain](#retrieval-question-answering-chain)
-
-## Introduction
-This repository aims to provide a java alternative to [hwchase17/langchain](https://github.com/hwchase17/langchain).
-It was born from the need to create an enterprise QA application.
 
 ## Dependency
 ```xml
