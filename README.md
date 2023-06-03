@@ -40,56 +40,112 @@ This section describes the usage of all chains that are currently available.
 
 ##### Azure Chat
 ```java
-	AzureOpenAiChatCompletionsChain chain = new AzureOpenAiChatCompletionsChain(
-		"my-azure-resource-name",
-		"gpt-35-turbo", // deployment name
-		"2023-05-15", // api version
-		"Hello, this is ${name}", 
-		new OpenAiChatCompletionsParameters(),
-		System.getenv("OPENAI_API_KEY")
-	);
+AzureOpenAiChatCompletionsChain chain = new AzureOpenAiChatCompletionsChain(
+	"my-azure-resource-name",
+	"gpt-35-turbo", // deployment name
+	"2023-05-15", // api version
+	"Hello, this is ${name}", 
+	new OpenAiChatCompletionsParameters(),
+	System.getenv("OPENAI_API_KEY")
+);
 
-	String result = chain.run(Collections.singletonMap("name", "Manuel")); // outputs something like: "Hello Manuel, how are you"
+String result = chain.run(Collections.singletonMap("name", "Manuel")); // outputs something like: "Hello Manuel, how are you"
 ```
 
 ##### Azure Completions
 ```java
-	AzureOpenAiCompletionsChain chain = new AzureOpenAiCompletionsChain(
-		"my-azure-resource-name",
-		"gpt-35-turbo", // deployment name
-		"2023-05-15", // api version
-		"Hello, this is ${name}", 
-		new OpenAiCompletionsParameters(),
-		System.getenv("OPENAI_API_KEY")
-	);
+AzureOpenAiCompletionsChain chain = new AzureOpenAiCompletionsChain(
+	"my-azure-resource-name",
+	"gpt-35-turbo", // deployment name
+	"2023-05-15", // api version
+	"Hello, this is ${name}", 
+	new OpenAiCompletionsParameters(),
+	System.getenv("OPENAI_API_KEY")
+);
 
-	String result = chain.run(Collections.singletonMap("name", "Manuel")); // outputs something like: "Hello Manuel, how are you"
+String result = chain.run(Collections.singletonMap("name", "Manuel")); // outputs something like: "Hello Manuel, how are you"
 ```
 
 #### OpenAI
 
 ##### OpenAI Chat
 ```java
-	OpenAiChatCompletionsChain chain = new OpenAiChatCompletionsChain(
-		"Hello, this is ${name}", 
-		new OpenAiChatCompletionsParameters().model("gpt-3.5-turbo"),
-		System.getenv("OPENAI_API_KEY")
-	);
+OpenAiChatCompletionsChain chain = new OpenAiChatCompletionsChain(
+	"Hello, this is ${name}", 
+	new OpenAiChatCompletionsParameters().model("gpt-3.5-turbo"),
+	System.getenv("OPENAI_API_KEY")
+);
 
-	String result = chain.run(Collections.singletonMap("name", "Manuel")); // outputs something like: "Hello Manuel, how are you"
+String result = chain.run(Collections.singletonMap("name", "Manuel")); // outputs something like: "Hello Manuel, how are you"
 ```
 
 #### OpenAI Completions
 ```java
-	OpenAiCompletionsChain chain = new OpenAiCompletionsChain(
-		"Hello, this is ${name}", 
-		new OpenAiCompletionsParameters().model("text-davinci-003"),
-		System.getenv("OPENAI_API_KEY")
-	);
+OpenAiCompletionsChain chain = new OpenAiCompletionsChain(
+	"Hello, this is ${name}", 
+	new OpenAiCompletionsParameters().model("text-davinci-003"),
+	System.getenv("OPENAI_API_KEY")
+);
 
-	String result = chain.run(Collections.singletonMap("name", "Manuel")); // outputs something like: "Hello Manuel, how are you"
+String result = chain.run(Collections.singletonMap("name", "Manuel")); // outputs something like: "Hello Manuel, how are you"
 ```
 
+### Retrieval
+
+#### LuceneRetrievalChain
+```java
+// create lucene index
+Directory directory = new MMapDirectory(Files.createTempDirectory("myTempDir"));
+
+// fill lucene index
+try (IndexWriter indexWriter = new IndexWriter(directory, new IndexWriterConfig(new StandardAnalyzer()))) {
+	List<String> documents = Arrays.asList("My first document", "My second document", "My third document");
+
+	for (String content : documents) {
+		Document doc = new Document();
+		doc.add(new TextField(PromptConstants.CONTENT, content, Field.Store.YES));
+		doc.add(new StringField(PromptConstants.SOURCE, String.valueOf(documents.indexOf(content) + 1), Field.Store.YES));
+		indexWriter.addDocument(doc);
+	}
+
+	indexWriter.commit();
+}
+
+// create retrieval chain
+RetrievalChain retrievalChain = new LuceneRetrievalChain(directory, 2 /* max count of retrieved documents */);
+
+// retrieve the most relevant documents for the passed question
+Stream<Map<String, String>> retrievedDocuments = retrievalChain.run("my question?");
+```
+
+### Summarization
+
+#### SummarizeDocumentsChain
+```java
+// create the llm chain which is used for summarization
+LargeLanguageModelChain llmChain = new OpenAiChatCompletionsChain(
+		PromptTemplates.QA_SUMMARIZE, 
+		new OpenAiChatCompletionsParameters().temperature(0).model("gpt-3.5-turbo"),
+		System.getenv("OPENAI_API_KEY"));
+
+// create the SummarizeDocumentsChain which is used to apply the llm chain to each passed document
+SummarizeDocumentsChain summarizeDocumentsChain = new SummarizeDocumentsChain(llmChain);
+
+// create some example documents
+Map<String, String> myFirstDocument = new HashMap<String, String>();
+myFirstDocument.put(PromptConstants.CONTENT, "this is my first document content");
+myFirstDocument.put(PromptConstants.SOURCE, "this is my first document source");
+
+Map<String, String> mySecondDocument = new HashMap<String, String>();
+mySecondDocument.put(PromptConstants.CONTENT, "this is my second document content");
+mySecondDocument.put(PromptConstants.SOURCE, "this is my second document source");
+
+// input for the summarize chain is a stream of documents
+Stream<Map<String, String>> documents = Stream.of(myFirstDocument, mySecondDocument);
+
+// output contains the passed documents with summarized content-Value
+Stream<Map<String, String>> summarizedDocuments = summarizeDocumentsChain.run(documents);
+```
 
 ## Use Cases
 
