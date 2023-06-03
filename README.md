@@ -4,7 +4,6 @@ This repository aims to provide a java alternative to [hwchase17/langchain](http
 It was born from the need to create an enterprise QA application.
 
 - [Dependency](#dependency)
-- [Base Concept](#base-concept)
 - [Chains](#chains)
     - [LLM](#llm)
         - [Azure](#azure)
@@ -30,12 +29,12 @@ It was born from the need to create an enterprise QA application.
     <version>0.0.3</version>
 </dependency>
 ```
+(requires Java 8 or higher)
 
-## Base Concept
+## Chains
 Modular components implement the [Chain](src/main/java/com/github/hakenadu/javalangchains/chains/Chain.java) interface.
 This provides an easy way to modularize the application and enables us to reuse them for various use cases.
 
-## Chains
 This section describes the usage of all chains that are currently available.
 
 ### LLM
