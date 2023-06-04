@@ -1,6 +1,8 @@
 package com.github.hakenadu.javalangchains.chains.qa;
 
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.github.hakenadu.javalangchains.chains.Chain;
@@ -22,13 +24,45 @@ import com.github.hakenadu.javalangchains.chains.Chain;
  */
 public class MapAnswerWithSourcesChain implements Chain<String, AnswerWithSources> {
 
+	/**
+	 * this {@link Pattern} is used to retrieve sources from a qa result string
+	 */
+	private final Pattern retrieveSourcesPattern;
+
+	/**
+	 * @param retrieveSourcesPattern {@link #retrieveSourcesPattern}
+	 */
+	public MapAnswerWithSourcesChain(final Pattern retrieveSourcesPattern) {
+		this.retrieveSourcesPattern = retrieveSourcesPattern;
+	}
+
+	/**
+	 * @param retrieveSourcesRegex used to create the
+	 *                             {@link #retrieveSourcesPattern}
+	 */
+	public MapAnswerWithSourcesChain(final String retrieveSourcesRegex) {
+		this.retrieveSourcesPattern = Pattern.compile(retrieveSourcesRegex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+	}
+
+	/**
+	 * creates an instance of {@link MapAnswerWithSourcesChain} with a default regex
+	 * to retrieve sources
+	 */
+	public MapAnswerWithSourcesChain() {
+		this("(.*?)(?:Source(?:s)?:\\s*)(.*)");
+	}
+
 	@Override
 	public AnswerWithSources run(final String input) {
-		final String[] answerAndSources = input.split("SOURCES:");
-		if (answerAndSources.length == 2) {
-			return new AnswerWithSources(answerAndSources[0].trim(),
-					Arrays.stream(answerAndSources[1].split(",")).map(String::trim).collect(Collectors.toList()));
+		final Matcher matcher = retrieveSourcesPattern.matcher(input);
+
+		if (matcher.find()) {
+			final String content = matcher.group(1).trim();
+			final String sources = matcher.group(2).trim();
+			return new AnswerWithSources(content,
+					Arrays.stream(sources.split(",")).map(String::trim).collect(Collectors.toList()));
+		} else {
+			return new AnswerWithSources(input);
 		}
-		return new AnswerWithSources(answerAndSources[0].trim());
 	}
 }

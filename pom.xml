@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -76,6 +78,7 @@
 		<maven.source.plugin.version>3.3.0</maven.source.plugin.version>
 		<maven.surefire.plugin.version>3.1.0</maven.surefire.plugin.version>
 		<nexus.staging.maven.plugin.version>1.6.13</nexus.staging.maven.plugin.version>
+		<pdfbox.version>3.0.0-RC1</pdfbox.version>
 		<reactor.version>1.1.7</reactor.version>
 		<webflux.version>5.3.27</webflux.version>
 	</properties>
@@ -240,6 +243,12 @@
 			<artifactId>lucene-queryparser</artifactId>
 			<version>${lucene.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>${pdfbox.version}</version>
+		</dependency>
+
 
 		<!-- Test Dependencies -->
 		<dependency>
