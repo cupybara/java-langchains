@@ -60,7 +60,7 @@ Stream<Map<String, String>> readDocuments = new ReadDocumentsFromPdfChain()
 ```java
 // this chain reads documents from a folder of pdfs and writes them to an index directory
 Chain<Path, Directory> createLuceneIndexChain = new ReadDocumentsFromPdfChain()
-		.chain(new WriteDocumentsToLuceneDirectoryChain(tempIndexPath));
+	.chain(new WriteDocumentsToLuceneDirectoryChain(tempIndexPath));
 
 Path pdfDirectoryPath = Paths.get(RetrievalQaIT.class.getResource("/pdf").toURI());
 
@@ -111,7 +111,8 @@ OpenAiChatCompletionsChain chain = new OpenAiChatCompletionsChain(
 	System.getenv("OPENAI_API_KEY")
 );
 
-String result = chain.run(Collections.singletonMap("name", "Manuel")); // outputs something like: "Hello Manuel, how are you"
+String result = chain.run(Collections.singletonMap("name", "Manuel"));
+// the above outputs something like: "Hello Manuel, how are you"
 ```
 
 #### OpenAI Completions
@@ -122,7 +123,8 @@ OpenAiCompletionsChain chain = new OpenAiCompletionsChain(
 	System.getenv("OPENAI_API_KEY")
 );
 
-String result = chain.run(Collections.singletonMap("name", "Manuel")); // outputs something like: "Hello Manuel, how are you"
+String result = chain.run(Collections.singletonMap("name", "Manuel"));
+// the above outputs something like: "Hello Manuel, how are you"
 ```
 
 ### Retrieval
