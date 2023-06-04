@@ -1,4 +1,4 @@
-package com.github.hakenadu.javalangchains.chains.retrieval;
+package com.github.hakenadu.javalangchains.chains.qa;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;

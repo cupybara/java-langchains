@@ -1,4 +1,4 @@
-package com.github.hakenadu.javalangchains.chains.retrieval.lucene;
+package com.github.hakenadu.javalangchains.chains.retrieval;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -87,7 +87,8 @@ public class LuceneRetrievalChainTest {
 			for (final String content : documents) {
 				final Document doc = new Document();
 				doc.add(new TextField(PromptConstants.CONTENT, content, Field.Store.YES));
-				doc.add(new StringField(PromptConstants.SOURCE, String.valueOf(documents.indexOf(content) + 1), Field.Store.YES));
+				doc.add(new StringField(PromptConstants.SOURCE, String.valueOf(documents.indexOf(content) + 1),
+						Field.Store.YES));
 				indexWriter.addDocument(doc);
 			}
 

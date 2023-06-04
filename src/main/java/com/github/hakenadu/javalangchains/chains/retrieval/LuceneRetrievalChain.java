@@ -1,4 +1,4 @@
-package com.github.hakenadu.javalangchains.chains.retrieval.lucene;
+package com.github.hakenadu.javalangchains.chains.retrieval;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -22,7 +22,6 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.store.Directory;
 
-import com.github.hakenadu.javalangchains.chains.retrieval.RetrievalChain;
 import com.github.hakenadu.javalangchains.util.PromptConstants;
 
 /**

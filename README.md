@@ -191,7 +191,7 @@ System.out.println(answerWithSources.getSources()); // [page 1 book xy, page 2 b
 Multiple chains can be chained together to create more powerful chains for complex use cases.
 
 ### Retrieval Question-Answering Chain 
-The [following integration test](src/test/java/com/github/hakenadu/javalangchains/chains/qa/RetrievalQaIT.java) provides a comprehensive solution for an information retrieval and summarization task, with the aim to provide concise, informative and relevant answers from a large set of documents. It combines multiple processes into a Question-Answering (QA) chain, each responsible for a specific task.
+The [following integration test](src/test/java/com/github/hakenadu/javalangchains/usecases/RetrievalQaIT.java) provides a comprehensive solution for an information retrieval and summarization task, with the aim to provide concise, informative and relevant answers from a large set of documents. It combines multiple processes into a Question-Answering (QA) chain, each responsible for a specific task.
 
 ```java
 OpenAiChatCompletionsParameters openAiChatParameters = new OpenAiChatCompletionsParameters()

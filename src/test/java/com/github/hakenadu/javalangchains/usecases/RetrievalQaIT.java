@@ -1,4 +1,4 @@
-package com.github.hakenadu.javalangchains.chains.qa;
+package com.github.hakenadu.javalangchains.usecases;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -19,12 +19,12 @@ import org.junit.jupiter.api.Test;
 import com.github.hakenadu.javalangchains.chains.Chain;
 import com.github.hakenadu.javalangchains.chains.llm.openai.chat.OpenAiChatCompletionsChain;
 import com.github.hakenadu.javalangchains.chains.llm.openai.chat.OpenAiChatCompletionsParameters;
-import com.github.hakenadu.javalangchains.chains.retrieval.AnswerWithSources;
-import com.github.hakenadu.javalangchains.chains.retrieval.CombineDocumentsChain;
-import com.github.hakenadu.javalangchains.chains.retrieval.MapAnswerWithSourcesChain;
-import com.github.hakenadu.javalangchains.chains.retrieval.SummarizeDocumentsChain;
-import com.github.hakenadu.javalangchains.chains.retrieval.lucene.LuceneRetrievalChain;
-import com.github.hakenadu.javalangchains.chains.retrieval.lucene.LuceneRetrievalChainTest;
+import com.github.hakenadu.javalangchains.chains.qa.AnswerWithSources;
+import com.github.hakenadu.javalangchains.chains.qa.CombineDocumentsChain;
+import com.github.hakenadu.javalangchains.chains.qa.MapAnswerWithSourcesChain;
+import com.github.hakenadu.javalangchains.chains.qa.SummarizeDocumentsChain;
+import com.github.hakenadu.javalangchains.chains.retrieval.LuceneRetrievalChain;
+import com.github.hakenadu.javalangchains.chains.retrieval.LuceneRetrievalChainTest;
 import com.github.hakenadu.javalangchains.util.PromptTemplates;
 
 /**
