@@ -18,8 +18,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import com.github.hakenadu.javalangchains.chains.Chain;
-import com.github.hakenadu.javalangchains.chains.data.reader.DocumentsFromPdfReader;
-import com.github.hakenadu.javalangchains.chains.data.writer.DocumentsToLuceneDirectoryWriter;
+import com.github.hakenadu.javalangchains.chains.data.reader.ReadDocumentsFromPdfChain;
+import com.github.hakenadu.javalangchains.chains.data.writer.WriteDocumentsToLuceneDirectoryChain;
 import com.github.hakenadu.javalangchains.chains.llm.openai.chat.OpenAiChatCompletionsChain;
 import com.github.hakenadu.javalangchains.chains.llm.openai.chat.OpenAiChatCompletionsParameters;
 import com.github.hakenadu.javalangchains.chains.qa.AnswerWithSources;
@@ -47,8 +47,8 @@ class RetrievalQaIT {
 		/*
 		 * We are also using a chain to create the lucene index directory
 		 */
-		final Chain<Path, Directory> createLuceneIndexChain = new DocumentsFromPdfReader()
-				.chain(new DocumentsToLuceneDirectoryWriter(tempIndexPath));
+		final Chain<Path, Directory> createLuceneIndexChain = new ReadDocumentsFromPdfChain()
+				.chain(new WriteDocumentsToLuceneDirectoryChain(tempIndexPath));
 
 		final Path pdfDirectoryPath = Paths.get(RetrievalQaIT.class.getResource("/pdf").toURI());
 

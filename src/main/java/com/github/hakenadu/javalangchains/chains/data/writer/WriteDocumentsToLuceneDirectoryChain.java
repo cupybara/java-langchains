@@ -22,7 +22,7 @@ import com.github.hakenadu.javalangchains.util.PromptConstants;
 /**
  * Stores documents in a lucene {@link Directory}
  */
-public class DocumentsToLuceneDirectoryWriter implements Chain<Stream<Map<String, String>>, Directory> {
+public class WriteDocumentsToLuceneDirectoryChain implements Chain<Stream<Map<String, String>>, Directory> {
 
 	/**
 	 * The directory {@link Path} used to store the created index data
@@ -32,17 +32,17 @@ public class DocumentsToLuceneDirectoryWriter implements Chain<Stream<Map<String
 	/**
 	 * @param directoryOutputPath {@link #directoryOutputPath}
 	 */
-	public DocumentsToLuceneDirectoryWriter(final Path directoryOutputPath) {
+	public WriteDocumentsToLuceneDirectoryChain(final Path directoryOutputPath) {
 		this.directoryOutputPath = directoryOutputPath;
 	}
 
 	/**
-	 * creates a {@link DocumentsToLuceneDirectoryWriter} with a default temp
+	 * creates a {@link WriteDocumentsToLuceneDirectoryChain} with a default temp
 	 * directory path
 	 * 
 	 * @throws IOException on error creating the temp dir
 	 */
-	public DocumentsToLuceneDirectoryWriter() throws IOException {
+	public WriteDocumentsToLuceneDirectoryChain() throws IOException {
 		this(Files.createTempDirectory("lucene"));
 	}
 

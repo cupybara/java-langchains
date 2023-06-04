@@ -17,7 +17,7 @@ import com.github.hakenadu.javalangchains.util.PromptConstants;
 /**
  * Utilizes Apache PDFBox to read documents from a folder of PDFs
  */
-public class DocumentsFromPdfReader implements Chain<Path, Stream<Map<String, String>>> {
+public class ReadDocumentsFromPdfChain implements Chain<Path, Stream<Map<String, String>>> {
 
 	@Override
 	public Stream<Map<String, String>> run(final Path pathToPdfDirectory) {
