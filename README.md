@@ -18,7 +18,7 @@ It was born from the need to create an enterprise QA application.
             - [OpenAI Chat](#openai-chat)
             - [OpenAI Completions](#openai-completions)
     - [Retrieval](#retrieval)
-        - [LuceneRetrievalChain](#luceneretrievalchain)
+        - [Retrieve Documents from Lucene Directory](#retrieve-documents-from-lucene-directory)
     - [QA](#qa)
         - [Summarize Documents](#summarize-documents)
         - [Combine Documents](#combine-documents)
@@ -127,7 +127,7 @@ String result = chain.run(Collections.singletonMap("name", "Manuel")); // output
 
 ### Retrieval
 
-#### LuceneRetrievalChain
+#### Retrieve Documents from Lucene Directory
 ```java
 // create lucene index
 Directory directory = new MMapDirectory(Files.createTempDirectory("myTempDir"));
