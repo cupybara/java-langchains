@@ -5,6 +5,11 @@ It was born from the need to create an enterprise QA application.
 
 - [Dependency](#dependency)
 - [Chains](#chains)
+    - [Data](#data)
+        - [Reader](#reader)
+            - [Read Documents from PDF](#read-documents-from-pdf)
+        - [Writer](#writer)
+            - [Write Documents to Lucene Directory](#write-documents-to-lucene-directory)
     - [LLM](#llm)
         - [Azure](#azure)
             - [Azure Chat](#azure-chat)
@@ -15,9 +20,9 @@ It was born from the need to create an enterprise QA application.
     - [Retrieval](#retrieval)
         - [LuceneRetrievalChain](#luceneretrievalchain)
     - [QA](#qa)
-        - [SummarizeDocumentsChain](#summarizedocumentschain)
-        - [CombineDocumentsChain](#combinedocumentschain)
-        - [MapAnswerWithSourcesChain](#mapanswerwithsourceschain)
+        - [Summarize Documents](#summarize-documents)
+        - [Combine Documents](#combine-documents)
+        - [Map LLM results to answers with sources](#map-llm-results-to-answers-with-sources)
 - [Use Cases](#use-cases)
     - [Retrieval Question-Answering Chain](#retrieval-question-answering-chain)
 
@@ -37,6 +42,31 @@ This provides an easy way to modularize the application and enables us to reuse 
 
 This section describes the usage of all chains that are currently available.
 
+### Data
+
+#### Reader
+
+##### Read Documents from PDF
+```java
+Stream<Map<String, String>> readDocuments = new ReadDocumentsFromPdfChain()
+	.run(Paths.get("path/to/my/pdf/folder"))
+	
+// the readDocuments contains (content, source) pairs for all read pdfs (source is the pdf filename)
+```
+
+#### Writer
+
+##### Write Documents to Lucene Directory
+```java
+// this chain reads documents from a folder of pdfs and writes them to an index directory
+Chain<Path, Directory> createLuceneIndexChain = new ReadDocumentsFromPdfChain()
+		.chain(new WriteDocumentsToLuceneDirectoryChain(tempIndexPath));
+
+Path pdfDirectoryPath = Paths.get(RetrievalQaIT.class.getResource("/pdf").toURI());
+
+Directory directory = createLuceneIndexChain.run(pdfDirectoryPath);
+```
+
 ### LLM
 
 #### Azure
@@ -52,7 +82,8 @@ AzureOpenAiChatCompletionsChain chain = new AzureOpenAiChatCompletionsChain(
 	System.getenv("OPENAI_API_KEY")
 );
 
-String result = chain.run(Collections.singletonMap("name", "Manuel")); // outputs something like: "Hello Manuel, how are you"
+String result = chain.run(Collections.singletonMap("name", "Manuel")); 
+// the above outputs something like: "Hello Manuel, how are you"
 ```
 
 ##### Azure Completions
@@ -66,7 +97,8 @@ AzureOpenAiCompletionsChain chain = new AzureOpenAiCompletionsChain(
 	System.getenv("OPENAI_API_KEY")
 );
 
-String result = chain.run(Collections.singletonMap("name", "Manuel")); // outputs something like: "Hello Manuel, how are you"
+String result = chain.run(Collections.singletonMap("name", "Manuel"));
+// the above outputs something like: "Hello Manuel, how are you"
 ```
 
 #### OpenAI
@@ -123,7 +155,7 @@ Stream<Map<String, String>> retrievedDocuments = retrievalChain.run("my question
 
 ### QA
 
-#### SummarizeDocumentsChain
+#### Summarize Documents
 ```java
 // create the llm chain which is used for summarization
 LargeLanguageModelChain llmChain = new OpenAiChatCompletionsChain(
@@ -150,7 +182,7 @@ Stream<Map<String, String>> documents = Stream.of(myFirstDocument, mySecondDocum
 Stream<Map<String, String>> summarizedDocuments = summarizeDocumentsChain.run(documents);
 ```
 
-#### CombineDocumentsChain
+#### Combine Documents
 ```java
 CombineDocumentsChain combineDocumentsChain = new CombineDocumentsChain();
 
@@ -176,7 +208,7 @@ Map<String, String> combinedDocument = combineDocumentsChain.run(documents);
  */
 ```
 
-#### MapAnswerWithSourcesChain
+#### Map LLM results to answers with sources
 ```java
 MapAnswerWithSourcesChain mapAnswerWithSourcesChain = new MapAnswerWithSourcesChain();
 
@@ -194,6 +226,20 @@ Multiple chains can be chained together to create more powerful chains for compl
 The [following integration test](src/test/java/com/github/hakenadu/javalangchains/usecases/RetrievalQaIT.java) provides a comprehensive solution for an information retrieval and summarization task, with the aim to provide concise, informative and relevant answers from a large set of documents. It combines multiple processes into a Question-Answering (QA) chain, each responsible for a specific task.
 
 ```java
+/*
+ * take a look at src/test/resources/pdf of this repository
+ * the pdf directory contains three documents about a fictional person named john doe
+ * which we want to query using our retrieval based qa with sources chain
+ */
+Path pdfDirectoryPath = Paths.get(RetrievalQaIT.class.getResource("/pdf").toURI());
+
+/*
+ * We are creating and running an initializing chain which reads document from our pdf folder
+ * and writes them to a lucene index directory
+ */
+Directory directory =  new ReadDocumentsFromPdfChain().chain(new WriteDocumentsToLuceneDirectoryChain()).run(pdfDirectoryPath);
+
+// we got multiple OpenAI LLM Chains and define our parameters at first
 OpenAiChatCompletionsParameters openAiChatParameters = new OpenAiChatCompletionsParameters()
 		.temperature(0)
 		.model("gpt-3.5-turbo");
