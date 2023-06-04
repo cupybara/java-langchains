@@ -42,6 +42,11 @@ public final class AzureOpenAiCompletionsChain extends OpenAiCompletionsChain {
 			final ObjectMapper objectMapper, final WebClient webClient) {
 		super(promptTemplate, parameters, apiKey, objectMapper, webClient);
 
+		if (parameters.getModel() != null) {
+			throw new IllegalArgumentException(
+					"the model parameter cannot be used for the Azure OpenAI Services, it is passed via deploymentName instead");
+		}
+
 		this.requestUri = UriComponentsBuilder.newInstance().scheme("https")
 				.host(String.format("%s.openai.azure.com", resourceName)).queryParam("api-version", apiVersion)
 				.path(String.format("/openai/deployments/%s/completions", deploymentName)).build().toUri();

@@ -46,6 +46,11 @@ public final class AzureOpenAiChatCompletionsChain extends OpenAiChatCompletions
 			final WebClient webClient) {
 		super(promptTemplate, parameters, apiKey, systemTemplate, objectMapper, webClient);
 
+		if (parameters.getModel() != null) {
+			throw new IllegalArgumentException(
+					"the model parameter cannot be used for the Azure OpenAI Services, it is passed via deploymentName instead");
+		}
+
 		this.requestUri = UriComponentsBuilder.newInstance().scheme("https")
 				.host(String.format("%s.openai.azure.com", resourceName)).queryParam("api-version", apiVersion)
 				.path(String.format("/openai/deployments/%s/chat/completions", deploymentName)).build().toUri();
