@@ -174,12 +174,13 @@ ModifyDocumentsContentChain summarizeDocumentsChain = new ModifyDocumentsContent
 Map<String, String> myFirstDocument = new HashMap<String, String>();
 myFirstDocument.put(PromptConstants.CONTENT, "this is my first document content");
 myFirstDocument.put(PromptConstants.SOURCE, "this is my first document source");
-// the default summarize prompt PromptTemplates.QA_SUMMARIZE also expects a question in the document
+// the default summarize prompt PromptTemplates.QA_SUMMARIZE also expects the question used for retrieval in the document
 myFirstDocument.put(PromptConstants.QUESTION, "who is John Doe?");
 
 Map<String, String> mySecondDocument = new HashMap<String, String>();
 mySecondDocument.put(PromptConstants.CONTENT, "this is my second document content");
 mySecondDocument.put(PromptConstants.SOURCE, "this is my second document source");
+mySecondDocument.put(PromptConstants.QUESTION, "how old is John Doe?"); // see comment above
 
 // input for the summarize chain is a stream of documents
 Stream<Map<String, String>> documents = Stream.of(myFirstDocument, mySecondDocument);
