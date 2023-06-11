@@ -158,7 +158,7 @@ Stream<Map<String, String>> retrievedDocuments = retrievalChain.run("my question
 ### QA
 
 #### Modify Documents
-The ModifyDocumentsContentCHain can be used for document summarization (for example).
+The ModifyDocumentsContentChain can be used for document summarization (for example).
 
 ```java
 // create the llm chain which is used for summarization
@@ -174,6 +174,8 @@ ModifyDocumentsContentChain summarizeDocumentsChain = new ModifyDocumentsContent
 Map<String, String> myFirstDocument = new HashMap<String, String>();
 myFirstDocument.put(PromptConstants.CONTENT, "this is my first document content");
 myFirstDocument.put(PromptConstants.SOURCE, "this is my first document source");
+// the default summarize prompt PromptTemplates.QA_SUMMARIZE also expects a question in the document
+myFirstDocument.put(PromptConstants.QUESTION, "who is John Doe?");
 
 Map<String, String> mySecondDocument = new HashMap<String, String>();
 mySecondDocument.put(PromptConstants.CONTENT, "this is my second document content");
