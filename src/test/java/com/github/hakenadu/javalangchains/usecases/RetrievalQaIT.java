@@ -25,7 +25,7 @@ import com.github.hakenadu.javalangchains.chains.llm.openai.chat.OpenAiChatCompl
 import com.github.hakenadu.javalangchains.chains.qa.AnswerWithSources;
 import com.github.hakenadu.javalangchains.chains.qa.CombineDocumentsChain;
 import com.github.hakenadu.javalangchains.chains.qa.MapAnswerWithSourcesChain;
-import com.github.hakenadu.javalangchains.chains.qa.SummarizeDocumentsChain;
+import com.github.hakenadu.javalangchains.chains.qa.ModifyDocumentsContentChain;
 import com.github.hakenadu.javalangchains.chains.retrieval.LuceneRetrievalChain;
 import com.github.hakenadu.javalangchains.util.PromptTemplates;
 
@@ -77,7 +77,7 @@ class RetrievalQaIT {
 			 * contain the most relevant information. This is achieved using an OpenAI LLM
 			 * (gpt-3.5-turbo in this case)
 			 */
-			final SummarizeDocumentsChain summarizeDocumentsChain = new SummarizeDocumentsChain(
+			final ModifyDocumentsContentChain summarizeDocumentsChain = new ModifyDocumentsContentChain(
 					new OpenAiChatCompletionsChain(PromptTemplates.QA_SUMMARIZE, openAiChatParameters,
 							System.getenv("OPENAI_API_KEY")));
 

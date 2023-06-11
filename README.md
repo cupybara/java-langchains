@@ -20,7 +20,7 @@ It was born from the need to create an enterprise QA application.
     - [Retrieval](#retrieval)
         - [Retrieve Documents from Lucene Directory](#retrieve-documents-from-lucene-directory)
     - [QA](#qa)
-        - [Summarize Documents](#summarize-documents)
+        - [Modify Documents](#modify-documents)
         - [Combine Documents](#combine-documents)
         - [Map LLM results to answers with sources](#map-llm-results-to-answers-with-sources)
 - [Use Cases](#use-cases)
@@ -157,7 +157,9 @@ Stream<Map<String, String>> retrievedDocuments = retrievalChain.run("my question
 
 ### QA
 
-#### Summarize Documents
+#### Modify Documents
+The ModifyDocumentsContentCHain can be used for document summarization (for example).
+
 ```java
 // create the llm chain which is used for summarization
 LargeLanguageModelChain llmChain = new OpenAiChatCompletionsChain(
@@ -165,8 +167,8 @@ LargeLanguageModelChain llmChain = new OpenAiChatCompletionsChain(
 		new OpenAiChatCompletionsParameters().temperature(0).model("gpt-3.5-turbo"),
 		System.getenv("OPENAI_API_KEY"));
 
-// create the SummarizeDocumentsChain which is used to apply the llm chain to each passed document
-SummarizeDocumentsChain summarizeDocumentsChain = new SummarizeDocumentsChain(llmChain);
+// create the ModifyDocumentsContentChain which is used to apply the llm chain to each passed document
+ModifyDocumentsContentChain summarizeDocumentsChain = new ModifyDocumentsContentChain(llmChain);
 
 // create some example documents
 Map<String, String> myFirstDocument = new HashMap<String, String>();
@@ -257,7 +259,7 @@ try (LuceneRetrievalChain retrievalChain = new LuceneRetrievalChain(directory /*
 	 * contain the most relevant information. This is achieved using an OpenAI LLM
 	 * (gpt-3.5-turbo in this case)
 	 */
-	SummarizeDocumentsChain summarizeDocumentsChain = new SummarizeDocumentsChain(new OpenAiChatCompletionsChain(
+	ModifyDocumentsContentChain summarizeDocumentsChain = new ModifyDocumentsContentChain(new OpenAiChatCompletionsChain(
 			PromptTemplates.QA_SUMMARIZE, openAiChatParameters, System.getenv("OPENAI_API_KEY")));
 
 	/*
