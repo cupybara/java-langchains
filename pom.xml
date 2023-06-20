@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -40,8 +42,8 @@
 			scm:git:ssh://github.com:Hakenadu/java-langchains.git
 		</developerConnection>
 		<url>https://github.com/Hakenadu/java-langchains/tree/master</url>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 
 	<distributionManagement>
 		<snapshotRepository>
@@ -68,6 +70,7 @@
 		<junit.jupiter.version>5.9.3</junit.jupiter.version>
 		<log4j.version>2.20.0</log4j.version>
 		<lucene.version>8.10.1</lucene.version>
+		<elasticsearch.version>8.8.1</elasticsearch.version>
 		<maven.deploy.plugin.version>3.1.0</maven.deploy.plugin.version>
 		<maven.gpg.plugin.version>3.1.0</maven.gpg.plugin.version>
 		<maven.javadoc.plugin.version>3.5.0</maven.javadoc.plugin.version>
@@ -240,6 +243,11 @@
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-queryparser</artifactId>
 			<version>${lucene.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.elasticsearch.client</groupId>
+			<artifactId>elasticsearch-rest-client</artifactId>
+			<version>${elasticsearch.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>

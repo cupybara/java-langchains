@@ -9,6 +9,7 @@ It was born from the need to create an enterprise QA application.
         - [Reader](#reader)
             - [Read Documents from PDF](#read-documents-from-pdf)
         - [Writer](#writer)
+            - [Write Documents to Elasticsearch Index](#write-documents-to-elasticsearch-index)
             - [Write Documents to Lucene Directory](#write-documents-to-lucene-directory)
     - [LLM](#llm)
         - [Azure](#azure)
@@ -56,13 +57,26 @@ Stream<Map<String, String>> readDocuments = new ReadDocumentsFromPdfChain()
 
 #### Writer
 
+##### Write Documents to Elasticsearch Index
+```java
+// this chain reads documents from a folder of pdfs and writes them to an elasticsearch index
+Chain<Path, Void> fillElasticsearchIndexChain = new ReadDocumentsFromPdfChain()
+				.chain(new WriteDocumentsToElasticsearchIndexChain("my-index"));
+
+Path pdfDirectoryPath = Paths.get(getClass().getResource("/pdf").toURI());
+
+fillElasticsearchIndexChain.run(pdfDirectoryPath);
+```
+
 ##### Write Documents to Lucene Directory
 ```java
+Path tempIndexPath = Files.createTempDirectory("lucene")
+
 // this chain reads documents from a folder of pdfs and writes them to an index directory
 Chain<Path, Directory> createLuceneIndexChain = new ReadDocumentsFromPdfChain()
 	.chain(new WriteDocumentsToLuceneDirectoryChain(tempIndexPath));
 
-Path pdfDirectoryPath = Paths.get(RetrievalQaIT.class.getResource("/pdf").toURI());
+Path pdfDirectoryPath = Paths.get(getClass().getResource("/pdf").toURI());
 
 Directory directory = createLuceneIndexChain.run(pdfDirectoryPath);
 ```
