@@ -19,6 +19,7 @@ It was born from the need to create an enterprise QA application.
             - [OpenAI Chat](#openai-chat)
             - [OpenAI Completions](#openai-completions)
     - [Retrieval](#retrieval)
+        - [Retrieve Documents from Elasticsearch Index](#retrieve-documents-from-elasticsearch-index)
         - [Retrieve Documents from Lucene Directory](#retrieve-documents-from-lucene-directory)
     - [QA](#qa)
         - [Modify Documents](#modify-documents)
@@ -61,7 +62,7 @@ Stream<Map<String, String>> readDocuments = new ReadDocumentsFromPdfChain()
 ```java
 // this chain reads documents from a folder of pdfs and writes them to an elasticsearch index
 Chain<Path, Void> fillElasticsearchIndexChain = new ReadDocumentsFromPdfChain()
-				.chain(new WriteDocumentsToElasticsearchIndexChain("my-index"));
+  .chain(new WriteDocumentsToElasticsearchIndexChain("my-index"));
 
 Path pdfDirectoryPath = Paths.get(getClass().getResource("/pdf").toURI());
 
@@ -143,7 +144,32 @@ String result = chain.run(Collections.singletonMap("name", "Manuel"));
 
 ### Retrieval
 
+#### Retrieve Documents from Elasticsearch Index
+See [ElasticsearchRetrievalChainTest](src/test/java/com/github/hakenadu/javalangchains/chains/retrieval/ElasticsearchRetrievalChainTest.java)
+
+```java
+final Chain<Path, Void> createElasticsearchIndexChain = new ReadDocumentsFromPdfChain()
+		.chain(new WriteDocumentsToElasticsearchIndexChain("my-index"));
+
+final Path pdfDirectoryPath = Paths.get(ElasticsearchRetrievalChainTest.class.getResource("/pdf").toURI());
+
+// create and fill elasticsearch index with read pdfs (source, content)-pairs
+createElasticsearchIndexChain.run(pdfDirectoryPath);
+
+// retrieve documents relevant to a specific question
+try (final RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200)).build();
+		final ElasticsearchRetrievalChain retrievalChain = new ElasticsearchRetrievalChain("my-index", restClient, 1)) {
+
+	// retrieve the most relevant documents for the passed question
+	final Stream<Map<String, String>> retrievedDocuments = retrievalChain.run("who is john doe?").collect(Collectors.toList());
+
+	// ...
+}
+```
+
 #### Retrieve Documents from Lucene Directory
+See [LuceneRetrievalChainTest](src/test/java/com/github/hakenadu/javalangchains/chains/retrieval/LuceneRetrievalChainTest.java)
+
 ```java
 // create lucene index
 Directory directory = new MMapDirectory(Files.createTempDirectory("myTempDir"));

@@ -5,13 +5,18 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import org.apache.http.HttpHost;
+import org.apache.http.HttpStatus;
 import org.elasticsearch.client.Request;
+import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.hakenadu.javalangchains.chains.Chain;
+import com.github.hakenadu.javalangchains.chains.retrieval.ElasticsearchRetrievalChain;
+import com.github.hakenadu.javalangchains.util.PromptConstants;
 
 /**
  * Inserts documents into an elasticsearch index
@@ -70,6 +75,8 @@ public class WriteDocumentsToElasticsearchIndexChain implements Chain<Stream<Map
 	public Void run(final Stream<Map<String, String>> input) {
 		try (final RestClient restClient = restClientBuilder.build()) {
 
+			createIndexIfNotExists(restClient);
+
 			input.forEach(document -> {
 				final String documentJson;
 				try {
@@ -92,5 +99,50 @@ public class WriteDocumentsToElasticsearchIndexChain implements Chain<Stream<Map
 			throw new IllegalStateException("error writing documents to elasticsearch index", ioException);
 		}
 		return null;
+	}
+
+	/**
+	 * Checks whether an index with the name {@link #index} exists. If none exists,
+	 * it is created with default settings used for
+	 * {@link ElasticsearchRetrievalChain}.
+	 * 
+	 * @param restClient the {@link RestClient} used to perform elasticsearch
+	 *                   requests
+	 * @throws IOException on error
+	 */
+	private void createIndexIfNotExists(final RestClient restClient) throws IOException {
+		final Request indexExistsRequest = new Request("HEAD", '/' + index);
+		final Response indexExistsResponse = restClient.performRequest(indexExistsRequest);
+		if (indexExistsResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+			LOGGER.info("index {} exists", index);
+			return;
+		}
+
+		LOGGER.info("creating index {} with default settings", index);
+		
+		// https://github.com/hwchase17/langchain/blob/master/langchain/retrievers/elastic_search_bm25.py
+		final ObjectNode indexRequestBody = this.objectMapper.createObjectNode();
+
+		// "settings": {...}
+		final ObjectNode settings = indexRequestBody.putObject("settings");
+
+		// "analysis": {"analyzer": {"default": {"type": "standard"}}}
+		settings.putObject("analysis").putObject("analyzer").putObject("default").put("type", "standard");
+
+		// "similarity": {"custom_bm25": {"type": "BM25", "k1": 2.0, "b": 0.75}
+		settings.putObject("similarity").putObject("custom_bm25").put("type", "BM25").put("k1", 2.0).put("b", 0.75);
+
+		// "mappings": {"properties": {"content": {"type": "text", "similarity": "custom_bm25"}}}
+		indexRequestBody.putObject("mappings").putObject("properties").putObject(PromptConstants.CONTENT)
+				.put("type", "text").put("similarity", "custom_bm25");
+		
+		final String  indexRequestBodyJson = indexRequestBody.toString();
+		final Request indexRequest = new Request("PUT", '/' + index);
+		indexRequest.setJsonEntity(indexRequestBodyJson);
+		try {
+			restClient.performRequest(indexRequest);
+		} catch (final IOException ioException) {
+			throw new IllegalStateException("error creating index " + indexRequestBodyJson, ioException);
+		}
 	}
 }
