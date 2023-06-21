@@ -33,7 +33,7 @@ It was born from the need to create an enterprise QA application.
 <dependency>
     <groupId>com.github.hakenadu</groupId>
     <artifactId>java-langchains</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
 </dependency>
 ```
 (requires Java 8 or higher)
@@ -147,7 +147,7 @@ String result = chain.run(Collections.singletonMap("name", "Manuel"));
 ### Retrieval
 
 #### Retrieve Documents from Elasticsearch Index
-See [ElasticsearchRetrievalChainTest](src/test/java/com/github/hakenadu/javalangchains/chains/retrieval/ElasticsearchRetrievalChainTest.java)
+See [ElasticsearchRetrievalChainIT](src/test/java/com/github/hakenadu/javalangchains/chains/retrieval/ElasticsearchRetrievalChainIT.java)
 
 ```java
 RestClientBuilder restClientBuilder = RestClient.builder(new HttpHost("localhost", 9200));

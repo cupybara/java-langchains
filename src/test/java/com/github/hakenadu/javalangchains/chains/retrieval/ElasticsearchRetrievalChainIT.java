@@ -15,6 +15,7 @@ import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.github.hakenadu.javalangchains.chains.Chain;
@@ -25,7 +26,8 @@ import com.github.hakenadu.javalangchains.util.PromptConstants;
 /**
  * Tests for the {@link ElasticsearchRetrievalChain}
  */
-class ElasticsearchRetrievalChainTest {
+@Disabled
+class ElasticsearchRetrievalChainIT {
 
 	private static RestClientBuilder restClientBuilder;
 
@@ -36,7 +38,7 @@ class ElasticsearchRetrievalChainTest {
 		final Chain<Path, Void> createElasticsearchIndexChain = new ReadDocumentsFromPdfChain()
 				.chain(new WriteDocumentsToElasticsearchIndexChain("my-index", restClientBuilder));
 
-		final Path pdfDirectoryPath = Paths.get(ElasticsearchRetrievalChainTest.class.getResource("/pdf").toURI());
+		final Path pdfDirectoryPath = Paths.get(ElasticsearchRetrievalChainIT.class.getResource("/pdf").toURI());
 
 		// creates and fills the elasticsearch index "my-index"
 		createElasticsearchIndexChain.run(pdfDirectoryPath);
