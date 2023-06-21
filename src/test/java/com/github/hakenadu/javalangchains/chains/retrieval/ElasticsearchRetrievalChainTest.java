@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestClientBuilder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -26,10 +27,14 @@ import com.github.hakenadu.javalangchains.util.PromptConstants;
  */
 class ElasticsearchRetrievalChainTest {
 
+	private static RestClientBuilder restClientBuilder;
+
 	@BeforeAll
 	static void beforeAll() throws URISyntaxException {
+		restClientBuilder = RestClient.builder(new HttpHost("localhost", 9200));
+
 		final Chain<Path, Void> createElasticsearchIndexChain = new ReadDocumentsFromPdfChain()
-				.chain(new WriteDocumentsToElasticsearchIndexChain("my-index"));
+				.chain(new WriteDocumentsToElasticsearchIndexChain("my-index", restClientBuilder));
 
 		final Path pdfDirectoryPath = Paths.get(ElasticsearchRetrievalChainTest.class.getResource("/pdf").toURI());
 
@@ -39,7 +44,7 @@ class ElasticsearchRetrievalChainTest {
 
 	@Test
 	void testRun() throws IOException {
-		try (final RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200)).build();
+		try (final RestClient restClient = restClientBuilder.build();
 				final ElasticsearchRetrievalChain retrievalChain = new ElasticsearchRetrievalChain("my-index",
 						restClient, 1)) {
 

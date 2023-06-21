@@ -60,9 +60,11 @@ Stream<Map<String, String>> readDocuments = new ReadDocumentsFromPdfChain()
 
 ##### Write Documents to Elasticsearch Index
 ```java
+RestClientBuilder restClientBuilder = RestClient.builder(new HttpHost("localhost", 9200));
+
 // this chain reads documents from a folder of pdfs and writes them to an elasticsearch index
 Chain<Path, Void> fillElasticsearchIndexChain = new ReadDocumentsFromPdfChain()
-  .chain(new WriteDocumentsToElasticsearchIndexChain("my-index"));
+  .chain(new WriteDocumentsToElasticsearchIndexChain("my-index", restClientBuilder));
 
 Path pdfDirectoryPath = Paths.get(getClass().getResource("/pdf").toURI());
 
@@ -148,20 +150,22 @@ String result = chain.run(Collections.singletonMap("name", "Manuel"));
 See [ElasticsearchRetrievalChainTest](src/test/java/com/github/hakenadu/javalangchains/chains/retrieval/ElasticsearchRetrievalChainTest.java)
 
 ```java
-final Chain<Path, Void> createElasticsearchIndexChain = new ReadDocumentsFromPdfChain()
-		.chain(new WriteDocumentsToElasticsearchIndexChain("my-index"));
+RestClientBuilder restClientBuilder = RestClient.builder(new HttpHost("localhost", 9200));
 
-final Path pdfDirectoryPath = Paths.get(ElasticsearchRetrievalChainTest.class.getResource("/pdf").toURI());
+Chain<Path, Void> createElasticsearchIndexChain = new ReadDocumentsFromPdfChain()
+	.chain(new WriteDocumentsToElasticsearchIndexChain("my-index", restClientBuilder));
+
+Path pdfDirectoryPath = Paths.get(ElasticsearchRetrievalChainTest.class.getResource("/pdf").toURI());
 
 // create and fill elasticsearch index with read pdfs (source, content)-pairs
 createElasticsearchIndexChain.run(pdfDirectoryPath);
 
 // retrieve documents relevant to a specific question
-try (final RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200)).build();
-		final ElasticsearchRetrievalChain retrievalChain = new ElasticsearchRetrievalChain("my-index", restClient, 1)) {
+try (RestClient restClient = restClientBuilder.build();
+		ElasticsearchRetrievalChain retrievalChain = new ElasticsearchRetrievalChain("my-index", restClient, 1)) {
 
 	// retrieve the most relevant documents for the passed question
-	final Stream<Map<String, String>> retrievedDocuments = retrievalChain.run("who is john doe?").collect(Collectors.toList());
+	Stream<Map<String, String>> retrievedDocuments = retrievalChain.run("who is john doe?").collect(Collectors.toList());
 
 	// ...
 }
