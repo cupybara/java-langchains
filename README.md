@@ -34,7 +34,7 @@ It was born from the need to create an enterprise QA application.
 <dependency>
     <groupId>com.github.hakenadu</groupId>
     <artifactId>java-langchains</artifactId>
-    <version>0.1.2</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 (requires Java 8 or higher)
