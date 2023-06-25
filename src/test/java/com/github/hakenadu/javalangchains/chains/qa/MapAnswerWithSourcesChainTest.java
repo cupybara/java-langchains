@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Test;
 /**
  * unit tests for the class {@link MapAnswerWithSourcesChain}
  */
-public class MapAnswerWithSourcesChainTest {
+class MapAnswerWithSourcesChainTest {
 
 	@Test
-	public void testRunSources() {
+	void testRunSources() {
 		final AnswerWithSources answerWithSources = new MapAnswerWithSourcesChain()
 				.run("This is my test content. Sources: source-1, source-2");
 		assertNotNull(answerWithSources, "got no answer");
@@ -21,7 +21,7 @@ public class MapAnswerWithSourcesChainTest {
 	}
 
 	@Test
-	public void testRunSource() {
+	void testRunSource() {
 		final AnswerWithSources answerWithSources = new MapAnswerWithSourcesChain()
 				.run("This is my test content. Source: source-1");
 		assertNotNull(answerWithSources, "got no answer");
@@ -30,7 +30,7 @@ public class MapAnswerWithSourcesChainTest {
 	}
 
 	@Test
-	public void testRunNoSource() {
+	void testRunNoSource() {
 		final AnswerWithSources answerWithSources = new MapAnswerWithSourcesChain().run("This is my test content.");
 		assertNotNull(answerWithSources, "got no answer");
 		assertEquals("This is my test content.", answerWithSources.getAnswer(), "wrong answer");
@@ -38,7 +38,7 @@ public class MapAnswerWithSourcesChainTest {
 	}
 
 	@Test
-	public void testRunSourcesMultiline() {
+	void testRunSourcesMultiline() {
 		final AnswerWithSources answerWithSources = new MapAnswerWithSourcesChain()
 				.run("This is my test content.\nSOURCES: source-1, source-2");
 		assertNotNull(answerWithSources, "got no answer");

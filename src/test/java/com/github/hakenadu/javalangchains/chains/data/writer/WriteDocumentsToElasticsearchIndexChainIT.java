@@ -12,10 +12,10 @@ import com.github.hakenadu.javalangchains.chains.data.reader.ReadDocumentsFromPd
 /**
  * tests for the {@link WriteDocumentsToElasticsearchIndexChain}
  */
-public class WriteDocumentsToElasticsearchIndexChainIT {
+class WriteDocumentsToElasticsearchIndexChainIT {
 
 	@Test
-	public void testRun() throws URISyntaxException {
+	void testRun() throws URISyntaxException {
 		Chain<Path, Void> fillElasticsearchIndexChain = new ReadDocumentsFromPdfChain()
 				.chain(new WriteDocumentsToElasticsearchIndexChain("my-index"));
 

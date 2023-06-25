@@ -45,7 +45,7 @@ class RetrievalQaIT {
 	private static Directory directory;
 
 	@BeforeAll
-	public static void beforeAll() throws IOException, URISyntaxException {
+	static void beforeAll() throws IOException, URISyntaxException {
 		tempIndexPath = Files.createTempDirectory("lucene");
 
 		/*
@@ -64,13 +64,13 @@ class RetrievalQaIT {
 	}
 
 	@AfterAll
-	public static void afterAll() throws IOException {
+	static void afterAll() throws IOException {
 		directory.close();
 		Files.walk(tempIndexPath).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
 	}
 
 	@Test
-	public void testQa() throws IOException {
+	void testQa() throws IOException {
 		final OpenAiChatCompletionsParameters openAiChatParameters = new OpenAiChatCompletionsParameters()
 				.temperature(0).model("gpt-3.5-turbo");
 

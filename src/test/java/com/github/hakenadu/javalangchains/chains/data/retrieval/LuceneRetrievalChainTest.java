@@ -32,7 +32,7 @@ import com.github.hakenadu.javalangchains.util.PromptConstants;
 /**
  * Tests for the {@link LuceneRetrievalChain}
  */
-public class LuceneRetrievalChainTest {
+class LuceneRetrievalChainTest {
 
 	// @formatter:off
 	private static final String DOCUMENT_1 =
@@ -72,13 +72,13 @@ public class LuceneRetrievalChainTest {
 	private static Directory directory;
 
 	@BeforeAll
-	public static void beforeAll() throws IOException {
+	static void beforeAll() throws IOException {
 		tempDirPath = Files.createTempDirectory("lucene");
 		directory = new MMapDirectory(tempDirPath);
 		fillDirectory(directory);
 	}
 
-	public static void fillDirectory(final Directory indexDirectory) throws IOException {
+	static void fillDirectory(final Directory indexDirectory) throws IOException {
 		final StandardAnalyzer analyzer = new StandardAnalyzer();
 		final IndexWriterConfig config = new IndexWriterConfig(analyzer);
 		try (final IndexWriter indexWriter = new IndexWriter(indexDirectory, config)) {
@@ -97,13 +97,13 @@ public class LuceneRetrievalChainTest {
 	}
 
 	@AfterAll
-	public static void afterAll() throws IOException {
+	static void afterAll() throws IOException {
 		directory.close();
 		Files.walk(tempDirPath).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
 	}
 
 	@Test
-	public void testRun() throws IOException {
+	void testRun() throws IOException {
 		try (final LuceneRetrievalChain retrievalChain = new LuceneRetrievalChain(directory, 2)) {
 			final String question = "what kind of art does john make?";
 
