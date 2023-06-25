@@ -1,4 +1,4 @@
-package com.github.hakenadu.javalangchains.chains.retrieval;
+package com.github.hakenadu.javalangchains.chains.data.retrieval;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

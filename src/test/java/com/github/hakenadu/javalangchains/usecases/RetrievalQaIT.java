@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import com.github.hakenadu.javalangchains.chains.Chain;
 import com.github.hakenadu.javalangchains.chains.data.reader.ReadDocumentsFromPdfChain;
+import com.github.hakenadu.javalangchains.chains.data.retrieval.LuceneRetrievalChain;
 import com.github.hakenadu.javalangchains.chains.data.writer.WriteDocumentsToLuceneDirectoryChain;
 import com.github.hakenadu.javalangchains.chains.llm.openai.chat.OpenAiChatCompletionsChain;
 import com.github.hakenadu.javalangchains.chains.llm.openai.chat.OpenAiChatCompletionsParameters;
@@ -26,7 +27,6 @@ import com.github.hakenadu.javalangchains.chains.qa.AnswerWithSources;
 import com.github.hakenadu.javalangchains.chains.qa.CombineDocumentsChain;
 import com.github.hakenadu.javalangchains.chains.qa.MapAnswerWithSourcesChain;
 import com.github.hakenadu.javalangchains.chains.qa.ModifyDocumentsContentChain;
-import com.github.hakenadu.javalangchains.chains.retrieval.LuceneRetrievalChain;
 import com.github.hakenadu.javalangchains.util.PromptTemplates;
 
 /**

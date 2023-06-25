@@ -8,6 +8,9 @@ It was born from the need to create an enterprise QA application.
     - [Data](#data)
         - [Reader](#reader)
             - [Read Documents from PDF](#read-documents-from-pdf)
+        - [Retrieval](#retrieval)
+            - [Retrieve Documents from Elasticsearch Index](#retrieve-documents-from-elasticsearch-index)
+            - [Retrieve Documents from Lucene Directory](#retrieve-documents-from-lucene-directory)
         - [Writer](#writer)
             - [Write Documents to Elasticsearch Index](#write-documents-to-elasticsearch-index)
             - [Write Documents to Lucene Directory](#write-documents-to-lucene-directory)
@@ -18,13 +21,11 @@ It was born from the need to create an enterprise QA application.
         - [OpenAI](#openai)
             - [OpenAI Chat](#openai-chat)
             - [OpenAI Completions](#openai-completions)
-    - [Retrieval](#retrieval)
-        - [Retrieve Documents from Elasticsearch Index](#retrieve-documents-from-elasticsearch-index)
-        - [Retrieve Documents from Lucene Directory](#retrieve-documents-from-lucene-directory)
     - [QA](#qa)
         - [Modify Documents](#modify-documents)
         - [Combine Documents](#combine-documents)
         - [Map LLM results to answers with sources](#map-llm-results-to-answers-with-sources)
+        - [Split Documents](#split-documents)
 - [Use Cases](#use-cases)
     - [Retrieval Question-Answering Chain](#retrieval-question-answering-chain)
 
@@ -49,11 +50,67 @@ This section describes the usage of all chains that are currently available.
 #### Reader
 
 ##### Read Documents from PDF
+
 ```java
 Stream<Map<String, String>> readDocuments = new ReadDocumentsFromPdfChain()
 	.run(Paths.get("path/to/my/pdf/folder"))
 	
 // the readDocuments contains (content, source) pairs for all read pdfs (source is the pdf filename)
+```
+
+#### Retrieval
+
+##### Retrieve Documents from Elasticsearch Index
+See [ElasticsearchRetrievalChainIT](src/test/java/com/github/hakenadu/javalangchains/chains/data/retrieval/ElasticsearchRetrievalChainIT.java)
+
+```java
+RestClientBuilder restClientBuilder = RestClient.builder(new HttpHost("localhost", 9200));
+
+Chain<Path, Void> createElasticsearchIndexChain = new ReadDocumentsFromPdfChain()
+	.chain(new WriteDocumentsToElasticsearchIndexChain("my-index", restClientBuilder));
+
+Path pdfDirectoryPath = Paths.get(ElasticsearchRetrievalChainTest.class.getResource("/pdf").toURI());
+
+// create and fill elasticsearch index with read pdfs (source, content)-pairs
+createElasticsearchIndexChain.run(pdfDirectoryPath);
+
+// retrieve documents relevant to a specific question
+try (RestClient restClient = restClientBuilder.build();
+		ElasticsearchRetrievalChain retrievalChain = new ElasticsearchRetrievalChain("my-index", restClient, 1)) {
+
+	// retrieve the most relevant documents for the passed question
+	Stream<Map<String, String>> retrievedDocuments = retrievalChain.run("who is john doe?").collect(Collectors.toList());
+
+	// ...
+}
+```
+
+##### Retrieve Documents from Lucene Directory
+See [LuceneRetrievalChainTest](src/test/java/com/github/hakenadu/javalangchains/chains/data/retrieval/LuceneRetrievalChainTest.java)
+
+```java
+// create lucene index
+Directory directory = new MMapDirectory(Files.createTempDirectory("myTempDir"));
+
+// fill lucene index
+try (IndexWriter indexWriter = new IndexWriter(directory, new IndexWriterConfig(new StandardAnalyzer()))) {
+	List<String> documents = Arrays.asList("My first document", "My second document", "My third document");
+
+	for (String content : documents) {
+		Document doc = new Document();
+		doc.add(new TextField(PromptConstants.CONTENT, content, Field.Store.YES));
+		doc.add(new StringField(PromptConstants.SOURCE, String.valueOf(documents.indexOf(content) + 1), Field.Store.YES));
+		indexWriter.addDocument(doc);
+	}
+
+	indexWriter.commit();
+}
+
+// create retrieval chain
+RetrievalChain retrievalChain = new LuceneRetrievalChain(directory, 2 /* max count of retrieved documents */);
+
+// retrieve the most relevant documents for the passed question
+Stream<Map<String, String>> retrievedDocuments = retrievalChain.run("my question?");
 ```
 
 #### Writer
@@ -144,61 +201,6 @@ String result = chain.run(Collections.singletonMap("name", "Manuel"));
 // the above outputs something like: "Hello Manuel, how are you"
 ```
 
-### Retrieval
-
-#### Retrieve Documents from Elasticsearch Index
-See [ElasticsearchRetrievalChainIT](src/test/java/com/github/hakenadu/javalangchains/chains/retrieval/ElasticsearchRetrievalChainIT.java)
-
-```java
-RestClientBuilder restClientBuilder = RestClient.builder(new HttpHost("localhost", 9200));
-
-Chain<Path, Void> createElasticsearchIndexChain = new ReadDocumentsFromPdfChain()
-	.chain(new WriteDocumentsToElasticsearchIndexChain("my-index", restClientBuilder));
-
-Path pdfDirectoryPath = Paths.get(ElasticsearchRetrievalChainTest.class.getResource("/pdf").toURI());
-
-// create and fill elasticsearch index with read pdfs (source, content)-pairs
-createElasticsearchIndexChain.run(pdfDirectoryPath);
-
-// retrieve documents relevant to a specific question
-try (RestClient restClient = restClientBuilder.build();
-		ElasticsearchRetrievalChain retrievalChain = new ElasticsearchRetrievalChain("my-index", restClient, 1)) {
-
-	// retrieve the most relevant documents for the passed question
-	Stream<Map<String, String>> retrievedDocuments = retrievalChain.run("who is john doe?").collect(Collectors.toList());
-
-	// ...
-}
-```
-
-#### Retrieve Documents from Lucene Directory
-See [LuceneRetrievalChainTest](src/test/java/com/github/hakenadu/javalangchains/chains/retrieval/LuceneRetrievalChainTest.java)
-
-```java
-// create lucene index
-Directory directory = new MMapDirectory(Files.createTempDirectory("myTempDir"));
-
-// fill lucene index
-try (IndexWriter indexWriter = new IndexWriter(directory, new IndexWriterConfig(new StandardAnalyzer()))) {
-	List<String> documents = Arrays.asList("My first document", "My second document", "My third document");
-
-	for (String content : documents) {
-		Document doc = new Document();
-		doc.add(new TextField(PromptConstants.CONTENT, content, Field.Store.YES));
-		doc.add(new StringField(PromptConstants.SOURCE, String.valueOf(documents.indexOf(content) + 1), Field.Store.YES));
-		indexWriter.addDocument(doc);
-	}
-
-	indexWriter.commit();
-}
-
-// create retrieval chain
-RetrievalChain retrievalChain = new LuceneRetrievalChain(directory, 2 /* max count of retrieved documents */);
-
-// retrieve the most relevant documents for the passed question
-Stream<Map<String, String>> retrievedDocuments = retrievalChain.run("my question?");
-```
-
 ### QA
 
 #### Modify Documents
@@ -268,6 +270,51 @@ AnswerWithSources answerWithSources = mapAnswerWithSourcesChain.run("The answer 
 System.out.println(answerWithSources.getAnswer());  // The answer is bla bla bla.
 System.out.println(answerWithSources.getSources()); // [page 1 book xy, page 2 book ab]
 
+```
+
+#### Split Documents
+See [SplitDocumentsChainTest](src/test/java/com/github/hakenadu/javalangchains/chains/qa/split/SplitDocumentsChainTest.java)
+
+```java
+
+// 1. Create Documents
+
+List<Map<String, String>> documents = new LinkedList<>();
+
+Map<String, String> firstDocument = new LinkedHashMap<>();
+firstDocument.put(PromptConstants.SOURCE, "book of john");
+firstDocument.put(PromptConstants.CONTENT, "This is a short text. This is another short text.");
+documents.add(firstDocument);
+
+Map<String, String> secondDocument = new LinkedHashMap<>();
+secondDocument.put(PromptConstants.SOURCE, "book of jane");
+secondDocument.put(PromptConstants.CONTENT, "This is a short text.");
+documents.add(secondDocument);
+
+// 2. Split Documents
+
+/*
+ * We create a TextSplitter that splits a text into partitions using a JTokkit
+ * Encoding. We use the cl100k_base encoding (which btw is the default for
+ * gpt-3.5-turbo)
+ */
+TextSplitter tiktokenTextSplitter = new TiktokenTextSplitter(
+		Encodings.newDefaultEncodingRegistry().getEncoding(EncodingType.CL100K_BASE), 10);
+
+/*
+ * we now instantiate the SplitDocumentsChain which will split our documents
+ * using the above created TextSplitter on the "content" field.
+ */
+SplitDocumentsChain splitDocumentsChain = new SplitDocumentsChain(tiktokenTextSplitter);
+
+List<Map<String, String>> splitDocuments = splitDocumentsChain.run(documents.stream())
+		.collect(Collectors.toList());
+
+// splitDocuments: [
+//   {content=This is a short text. , source=book of john},
+//   {content=This is another short text., source=book of john},
+//   {content=This is a short text., source=book of jane}
+// ]
 ```
 
 ## Use Cases

@@ -15,7 +15,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.hakenadu.javalangchains.chains.Chain;
-import com.github.hakenadu.javalangchains.chains.retrieval.ElasticsearchRetrievalChain;
+import com.github.hakenadu.javalangchains.chains.data.retrieval.ElasticsearchRetrievalChain;
 import com.github.hakenadu.javalangchains.util.PromptConstants;
 
 /**

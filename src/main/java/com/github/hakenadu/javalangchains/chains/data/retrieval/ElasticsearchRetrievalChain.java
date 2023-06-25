@@ -1,4 +1,4 @@
-package com.github.hakenadu.javalangchains.chains.retrieval;
+package com.github.hakenadu.javalangchains.chains.data.retrieval;
 
 import java.io.Closeable;
 import java.io.IOException;
