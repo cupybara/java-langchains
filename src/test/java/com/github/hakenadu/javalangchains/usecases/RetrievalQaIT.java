@@ -27,7 +27,11 @@ import com.github.hakenadu.javalangchains.chains.qa.AnswerWithSources;
 import com.github.hakenadu.javalangchains.chains.qa.CombineDocumentsChain;
 import com.github.hakenadu.javalangchains.chains.qa.MapAnswerWithSourcesChain;
 import com.github.hakenadu.javalangchains.chains.qa.ModifyDocumentsContentChain;
+import com.github.hakenadu.javalangchains.chains.qa.split.JtokkitTextSplitter;
+import com.github.hakenadu.javalangchains.chains.qa.split.SplitDocumentsChain;
 import com.github.hakenadu.javalangchains.util.PromptTemplates;
+import com.knuddels.jtokkit.Encodings;
+import com.knuddels.jtokkit.api.EncodingType;
 
 /**
  * tests for a complete qa {@link Chain}
@@ -48,6 +52,10 @@ class RetrievalQaIT {
 		 * We are also using a chain to create the lucene index directory
 		 */
 		final Chain<Path, Directory> createLuceneIndexChain = new ReadDocumentsFromPdfChain()
+				// Optional Chain: split pdfs based on a max token count of 1000
+				.chain(new SplitDocumentsChain(new JtokkitTextSplitter(
+						Encodings.newDefaultEncodingRegistry().getEncoding(EncodingType.CL100K_BASE), 1000)))
+				// Mandatory Chain: write split pdf documents to a lucene directory
 				.chain(new WriteDocumentsToLuceneDirectoryChain(tempIndexPath));
 
 		final Path pdfDirectoryPath = Paths.get(RetrievalQaIT.class.getResource("/pdf").toURI());

@@ -60,7 +60,7 @@ public class MapAnswerWithSourcesChain implements Chain<String, AnswerWithSource
 			final String content = matcher.group(1).trim();
 			final String sources = matcher.group(2).trim();
 			return new AnswerWithSources(content,
-					Arrays.stream(sources.split(",")).map(String::trim).collect(Collectors.toList()));
+					Arrays.stream(sources.split(",")).map(String::trim).distinct().collect(Collectors.toList()));
 		} else {
 			return new AnswerWithSources(input);
 		}
