@@ -39,7 +39,7 @@ class SplitDocumentsChainTest {
 	}
 
 	/**
-	 * tests the {@link SplitDocumentsChain} using a {@link TiktokenTextSplitter}
+	 * tests the {@link SplitDocumentsChain} using a {@link JtokkitTextSplitter}
 	 */
 	@Test
 	void testSplitDocumentsByTokenCount() {
@@ -49,7 +49,7 @@ class SplitDocumentsChainTest {
 		 * Encoding. We use the cl100k_base encoding which is the default for
 		 * gpt-3.5-turbo.
 		 */
-		final TextSplitter tiktokenTextSplitter = new TiktokenTextSplitter(
+		final TextSplitter tiktokenTextSplitter = new JtokkitTextSplitter(
 				Encodings.newDefaultEncodingRegistry().getEncoding(EncodingType.CL100K_BASE), 10);
 
 		/*
