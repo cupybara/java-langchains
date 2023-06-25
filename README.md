@@ -298,14 +298,14 @@ documents.add(secondDocument);
  * Encoding. We use the cl100k_base encoding (which btw is the default for
  * gpt-3.5-turbo)
  */
-TextSplitter tiktokenTextSplitter = new TiktokenTextSplitter(
+TextSplitter textSplitter = new JtokkitTextSplitter(
 		Encodings.newDefaultEncodingRegistry().getEncoding(EncodingType.CL100K_BASE), 10);
 
 /*
  * we now instantiate the SplitDocumentsChain which will split our documents
  * using the above created TextSplitter on the "content" field.
  */
-SplitDocumentsChain splitDocumentsChain = new SplitDocumentsChain(tiktokenTextSplitter);
+SplitDocumentsChain splitDocumentsChain = new SplitDocumentsChain(textSplitter);
 
 List<Map<String, String>> splitDocuments = splitDocumentsChain.run(documents.stream())
 		.collect(Collectors.toList());
