@@ -69,7 +69,7 @@ RestClientBuilder restClientBuilder = RestClient.builder(new HttpHost("localhost
 Chain<Path, Void> createElasticsearchIndexChain = new ReadDocumentsFromPdfChain()
 	.chain(new WriteDocumentsToElasticsearchIndexChain("my-index", restClientBuilder));
 
-Path pdfDirectoryPath = Paths.get(ElasticsearchRetrievalChainTest.class.getResource("/pdf").toURI());
+Path pdfDirectoryPath = Paths.get(ElasticsearchRetrievalChainTest.class.getResource("/pdf/qa").toURI());
 
 // create and fill elasticsearch index with read pdfs (source, content)-pairs
 createElasticsearchIndexChain.run(pdfDirectoryPath);
@@ -123,7 +123,7 @@ RestClientBuilder restClientBuilder = RestClient.builder(new HttpHost("localhost
 Chain<Path, Void> fillElasticsearchIndexChain = new ReadDocumentsFromPdfChain()
   .chain(new WriteDocumentsToElasticsearchIndexChain("my-index", restClientBuilder));
 
-Path pdfDirectoryPath = Paths.get(getClass().getResource("/pdf").toURI());
+Path pdfDirectoryPath = Paths.get(getClass().getResource("/pdf/qa").toURI());
 
 fillElasticsearchIndexChain.run(pdfDirectoryPath);
 ```
@@ -136,7 +136,7 @@ Path tempIndexPath = Files.createTempDirectory("lucene")
 Chain<Path, Directory> createLuceneIndexChain = new ReadDocumentsFromPdfChain()
 	.chain(new WriteDocumentsToLuceneDirectoryChain(tempIndexPath));
 
-Path pdfDirectoryPath = Paths.get(getClass().getResource("/pdf").toURI());
+Path pdfDirectoryPath = Paths.get(getClass().getResource("/pdf/qa").toURI());
 
 Directory directory = createLuceneIndexChain.run(pdfDirectoryPath);
 ```
@@ -329,7 +329,7 @@ The [following integration test](src/test/java/com/github/hakenadu/javalangchain
  * the pdf directory contains three documents about a fictional person named john doe
  * which we want to query using our retrieval based qa with sources chain
  */
-Path pdfDirectoryPath = Paths.get(RetrievalQaTest.class.getResource("/pdf").toURI());
+Path pdfDirectoryPath = Paths.get(RetrievalQaTest.class.getResource("/pdf/qa").toURI());
 
 /*
  * We are creating and running an initializing chain which reads document from our pdf folder

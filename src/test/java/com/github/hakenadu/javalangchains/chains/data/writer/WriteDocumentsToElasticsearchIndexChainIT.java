@@ -19,7 +19,7 @@ class WriteDocumentsToElasticsearchIndexChainIT {
 		Chain<Path, Void> fillElasticsearchIndexChain = new ReadDocumentsFromPdfChain()
 				.chain(new WriteDocumentsToElasticsearchIndexChain("my-index"));
 
-		Path pdfDirectoryPath = Paths.get(WriteDocumentsToElasticsearchIndexChainIT.class.getResource("/pdf").toURI());
+		Path pdfDirectoryPath = Paths.get(WriteDocumentsToElasticsearchIndexChainIT.class.getResource("/pdf/qa").toURI());
 
 		fillElasticsearchIndexChain.run(pdfDirectoryPath);
 	}

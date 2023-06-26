@@ -38,7 +38,7 @@ class ElasticsearchRetrievalChainIT {
 		final Chain<Path, Void> createElasticsearchIndexChain = new ReadDocumentsFromPdfChain()
 				.chain(new WriteDocumentsToElasticsearchIndexChain("my-index", restClientBuilder));
 
-		final Path pdfDirectoryPath = Paths.get(ElasticsearchRetrievalChainIT.class.getResource("/pdf").toURI());
+		final Path pdfDirectoryPath = Paths.get(ElasticsearchRetrievalChainIT.class.getResource("/pdf/qa").toURI());
 
 		// creates and fills the elasticsearch index "my-index"
 		createElasticsearchIndexChain.run(pdfDirectoryPath);
