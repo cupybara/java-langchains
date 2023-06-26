@@ -39,7 +39,7 @@ import com.knuddels.jtokkit.api.EncodingType;
  * we'll read documents from our demo john doe pdfs at src/test/resources/pdf
  * and then ask questions about the protagonist.
  */
-class RetrievalQaIT {
+class RetrievalQaTest {
 
 	private static Path tempIndexPath;
 	private static Directory directory;
@@ -58,7 +58,7 @@ class RetrievalQaIT {
 				// Mandatory Chain: write split pdf documents to a lucene directory
 				.chain(new WriteDocumentsToLuceneDirectoryChain(tempIndexPath));
 
-		final Path pdfDirectoryPath = Paths.get(RetrievalQaIT.class.getResource("/pdf").toURI());
+		final Path pdfDirectoryPath = Paths.get(RetrievalQaTest.class.getResource("/pdf").toURI());
 
 		directory = createLuceneIndexChain.run(pdfDirectoryPath);
 	}

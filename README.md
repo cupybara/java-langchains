@@ -321,7 +321,7 @@ List<Map<String, String>> splitDocuments = splitDocumentsChain.run(documents.str
 Multiple chains can be chained together to create more powerful chains for complex use cases.
 
 ### Retrieval Question-Answering Chain 
-The [following integration test](src/test/java/com/github/hakenadu/javalangchains/usecases/RetrievalQaIT.java) provides a comprehensive solution for an information retrieval and summarization task, with the aim to provide concise, informative and relevant answers from a large set of documents. It combines multiple processes into a Question-Answering (QA) chain, each responsible for a specific task.
+The [following integration test](src/test/java/com/github/hakenadu/javalangchains/usecases/RetrievalQaTest.java) provides a comprehensive solution for an information retrieval and summarization task, with the aim to provide concise, informative and relevant answers from a large set of documents. It combines multiple processes into a Question-Answering (QA) chain, each responsible for a specific task.
 
 ```java
 /*
@@ -329,7 +329,7 @@ The [following integration test](src/test/java/com/github/hakenadu/javalangchain
  * the pdf directory contains three documents about a fictional person named john doe
  * which we want to query using our retrieval based qa with sources chain
  */
-Path pdfDirectoryPath = Paths.get(RetrievalQaIT.class.getResource("/pdf").toURI());
+Path pdfDirectoryPath = Paths.get(RetrievalQaTest.class.getResource("/pdf").toURI());
 
 /*
  * We are creating and running an initializing chain which reads document from our pdf folder
