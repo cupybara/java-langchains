@@ -100,7 +100,7 @@ class DocumentComparisonTest {
 						new OpenAiChatCompletionsParameters().temperature(0).model("gpt-3.5-turbo"),
 						System.getenv("OPENAI_API_KEY")));
 
-		final String result = documentComparisonChain.run("what about medical expenses?");
+		final String result = documentComparisonChain.run("to which extent are personal belongings covered?");
 		assertNotNull(result, "got null result");
 		System.out.println(result);
 	}

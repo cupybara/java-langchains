@@ -82,8 +82,9 @@ public final class PromptTemplates {
 		        "${%s}\n"
 		      + "\n"
 		      + "Compare the provided content and sources based on the given question: ${%s}."
-		      + "Answer in Markdown: Create a Markdown table with the source as the column header and the row headers similarities and deviations."
-		      + "If there are no similarities or no deviations, leave the corresponding cell empty.",
+		      + "\n"
+		      + "Line out differences and similarities between the different sources.\n"
+		      + "Name the source names in your comparison.",
 		PromptConstants.CONTENT, PromptConstants.QUESTION);
 
 	private PromptTemplates() {
