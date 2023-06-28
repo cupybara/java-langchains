@@ -1,7 +1,6 @@
 package com.github.hakenadu.javalangchains.chains;
 
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Basic interface for all modular components in this repository. A
@@ -15,11 +14,6 @@ import org.apache.logging.log4j.Logger;
  */
 @FunctionalInterface
 public interface Chain<I, O> {
-
-	/**
-	 * The default {@link Logger} for {@link Chain Chains}
-	 */
-	static Logger LOGGER = LogManager.getLogger();
 
 	/**
 	 * Execute this {@link Chain}
@@ -40,12 +34,9 @@ public interface Chain<I, O> {
 	default <B> Chain<I, B> chain(final Chain<O, B> next) {
 		return input -> {
 			final O prevOutput = run(input);
-			LOGGER.debug("prev output: {}", prevOutput);
+			LogManager.getLogger(next.getClass()).info("\n\n=================== INPUT ===================\n{}\n=============================================\n", prevOutput);
 
-			final B nextOutput = next.run(prevOutput);
-			LOGGER.debug("next output: {}", nextOutput);
-
-			return nextOutput;
+			return next.run(prevOutput);
 		};
 	}
 }

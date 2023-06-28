@@ -105,8 +105,6 @@ public abstract class OpenAiChain<P extends OpenAiParameters<P>, I extends P, O 
 
 	@Override
 	public String run(final Map<String, String> input) {
-		LOGGER.info("run {}", getClass().getSimpleName());
-
 		final I request = createRequest(input);
 		if (parameters != null) {
 			request.copyFrom(parameters);

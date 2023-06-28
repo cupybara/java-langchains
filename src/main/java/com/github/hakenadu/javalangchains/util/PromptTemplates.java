@@ -61,6 +61,31 @@ public final class PromptTemplates {
 	 */
 	public static final String QA_DOCUMENT = String.format("Content: ${%s}\nSource: ${%s}", PromptConstants.CONTENT, PromptConstants.SOURCE);
 	
+
+	/**
+	 * Based on {@link #QA_COMBINE} instructs an LLM to create information snippets used for document comparison
+	 */
+	public static final String QA_COMPARE = String.format(
+		      "Given the following extracted parts of a long document and a question, create a final answer which provides information about the question or criterion in the extracted document parts.\n"
+			+ "Your answer will be used for document comparison, so do not leave out potentially interesting key points.\n"
+		    + "If you don't know the answer, just say that you don't know. Don't try to make up an answer.\n"
+		    + "=========\n"
+		    + "QUESTION: ${%s}\n"
+		    + "=========\n"
+		    + "${%s}",
+		PromptConstants.QUESTION, PromptConstants.CONTENT);
+
+	/**
+	 * Instructs an LLM to compare a set of documents
+	 */
+	public static final String COMPARE_MULTIPLE_DOCUMENTS = String.format(
+		        "${%s}\n"
+		      + "\n"
+		      + "Compare the provided content and sources based on the given question: ${%s}."
+		      + "Answer in Markdown: Create a Markdown table with the source as the column header and the row headers similarities and deviations."
+		      + "If there are no similarities or no deviations, leave the corresponding cell empty.",
+		PromptConstants.CONTENT, PromptConstants.QUESTION);
+
 	private PromptTemplates() {
 		// not instantiated
 	}

@@ -109,9 +109,14 @@ class RetrievalQaTest {
 			 */
 			final MapAnswerWithSourcesChain mapAnswerWithSourcesChain = new MapAnswerWithSourcesChain();
 
+			// @formatter:off
 			// we combine all chain links into a self contained QA chain
-			final Chain<String, AnswerWithSources> qaChain = retrievalChain.chain(summarizeDocumentsChain)
-					.chain(combineDocumentsChain).chain(openAiChatChain).chain(mapAnswerWithSourcesChain);
+			final Chain<String, AnswerWithSources> qaChain = retrievalChain
+					.chain(summarizeDocumentsChain)
+					.chain(combineDocumentsChain)
+					.chain(openAiChatChain)
+					.chain(mapAnswerWithSourcesChain);
+			// @formatter:on
 
 			// the QA chain can now be called with a question and delivers an answer
 			final AnswerWithSources answerToValidQuestion = qaChain.run("who is john doe?");

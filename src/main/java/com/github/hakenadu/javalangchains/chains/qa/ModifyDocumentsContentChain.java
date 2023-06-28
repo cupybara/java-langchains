@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
+
 import com.github.hakenadu.javalangchains.chains.Chain;
 import com.github.hakenadu.javalangchains.util.PromptConstants;
 
@@ -44,9 +46,9 @@ public class ModifyDocumentsContentChain implements Chain<Stream<Map<String, Str
 	@Override
 	public Stream<Map<String, String>> run(final Stream<Map<String, String>> input) {
 		final Stream<Map<String, String>> stream = input.map(document -> {
-			LOGGER.debug("pre modification: {}", document);
+			LogManager.getLogger(getClass()).trace("pre modification: {}", document);
 			final String mappedContent = documentChain.run(document);
-			LOGGER.debug("post modification: {}", mappedContent);
+			LogManager.getLogger(getClass()).trace("post modification: {}", mappedContent);
 
 			final Map<String, String> mappedDocument = new HashMap<>(document);
 			mappedDocument.put(PromptConstants.CONTENT, mappedContent);

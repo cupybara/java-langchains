@@ -63,7 +63,7 @@ public class WriteDocumentsToLuceneDirectoryChain implements Chain<Stream<Map<St
 			input.forEach(document -> {
 				final Document doc = new Document();
 				doc.add(new TextField(PromptConstants.CONTENT, document.get(PromptConstants.CONTENT), Field.Store.YES));
-				doc.add(new StringField(PromptConstants.SOURCE, document.get(PromptConstants.SOURCE), Field.Store.YES));
+				doc.add(new TextField(PromptConstants.SOURCE, document.get(PromptConstants.SOURCE), Field.Store.YES));
 				try {
 					indexWriter.addDocument(doc);
 				} catch (final IOException innerIoException) {
