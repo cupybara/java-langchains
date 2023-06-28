@@ -102,6 +102,7 @@ class DocumentComparisonTest {
 
 		final String result = documentComparisonChain.run("to which extent are personal belongings covered?");
 		assertNotNull(result, "got null result");
+		
 		System.out.println(result);
 	}
 
