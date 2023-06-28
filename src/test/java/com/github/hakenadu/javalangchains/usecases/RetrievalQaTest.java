@@ -72,7 +72,7 @@ class RetrievalQaTest {
 	@Test
 	void testQa() throws IOException {
 		final OpenAiChatCompletionsParameters openAiChatParameters = new OpenAiChatCompletionsParameters()
-				.temperature(0).model("gpt-3.5-turbo");
+				.temperature(0D).model("gpt-3.5-turbo");
 
 		/*
 		 * Chain 1: The retrievalChain is used to retrieve relevant documents from an

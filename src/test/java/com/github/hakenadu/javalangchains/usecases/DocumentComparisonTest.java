@@ -97,29 +97,30 @@ class DocumentComparisonTest {
 		final Chain<String, String> documentComparisonChain = new JoinChain<>(true /* parallel */, retrievalChains)
 				.chain(new CombineDocumentsChain(PromptTemplates.QA_DOCUMENT))
 				.chain(new OpenAiChatCompletionsChain(PromptTemplates.COMPARE_MULTIPLE_DOCUMENTS,
-						new OpenAiChatCompletionsParameters().temperature(0).model("gpt-3.5-turbo"),
+						new OpenAiChatCompletionsParameters().temperature(0.8).model("gpt-3.5-turbo"),
 						System.getenv("OPENAI_API_KEY")));
 
-		final String result = documentComparisonChain.run("to which extent are personal belongings covered?");
+		final String result = documentComparisonChain.run("how are claims processed?");
 		assertNotNull(result, "got null result");
-		
+
 		System.out.println(result);
 	}
 
 	private Chain<String, Map<String, String>> createRetrievalChain(final String pdfSource) {
-		final LuceneRetrievalChain retrievalChain = new LuceneRetrievalChain(directory, 1,
+		final LuceneRetrievalChain retrievalChain = new LuceneRetrievalChain(directory, 4,
 				content -> createQuery(pdfSource, content));
 
 		final ModifyDocumentsContentChain summarizeDocumentsChain = new ModifyDocumentsContentChain(
 				new OpenAiChatCompletionsChain(PromptTemplates.QA_SUMMARIZE,
-						new OpenAiChatCompletionsParameters().temperature(0).model("gpt-3.5-turbo"),
+						new OpenAiChatCompletionsParameters().temperature(0.8).model("gpt-3.5-turbo"),
 						System.getenv("OPENAI_API_KEY")));
 
 		final CombineDocumentsChain combineDocumentsChain = new CombineDocumentsChain();
 
-		final ModifyDocumentsContentChain compareChain = new ModifyDocumentsContentChain(new OpenAiChatCompletionsChain(
-				PromptTemplates.QA_COMPARE, new OpenAiChatCompletionsParameters().temperature(0).model("gpt-3.5-turbo"),
-				System.getenv("OPENAI_API_KEY")));
+		final ModifyDocumentsContentChain compareChain = new ModifyDocumentsContentChain(
+				new OpenAiChatCompletionsChain(PromptTemplates.QA_COMPARE,
+						new OpenAiChatCompletionsParameters().temperature(0.8).model("gpt-3.5-turbo"),
+						System.getenv("OPENAI_API_KEY")));
 
 		// @formatter:off
 		return retrievalChain
@@ -148,8 +149,8 @@ class DocumentComparisonTest {
 
 			// @formatter:off
 			return new BooleanQuery.Builder()
-					.add(sourceQuery, BooleanClause.Occur.MUST)
-					.add(contentQuery, BooleanClause.Occur.SHOULD)
+					.add(sourceQuery, BooleanClause.Occur.FILTER)
+					.add(contentQuery, BooleanClause.Occur.MUST)
 					.build();
 			// @formatter:on
 		} catch (final ParseException parseException) {
