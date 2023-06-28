@@ -61,7 +61,7 @@ public abstract class OpenAiParameters<T extends OpenAiParameters<T>> {
 	 * We generally recommend altering this or `top_p` but not both.
 	 */
 	@JsonProperty
-	private Integer temperature;
+	private Double temperature;
 
 	/**
 	 * @param typeClass {@link #typeClass}
@@ -142,14 +142,14 @@ public abstract class OpenAiParameters<T extends OpenAiParameters<T>> {
 	/**
 	 * @return {@link #temperature}
 	 */
-	public Integer getTemperature() {
+	public Double getTemperature() {
 		return temperature;
 	}
 
 	/**
 	 * @param temperature {@link #temperature}
 	 */
-	public void setTemperature(final Integer temperature) {
+	public void setTemperature(final Double temperature) {
 		this.temperature = temperature;
 	}
 
@@ -157,7 +157,7 @@ public abstract class OpenAiParameters<T extends OpenAiParameters<T>> {
 	 * @param temperature {@link #temperature}
 	 * @return this
 	 */
-	public T temperature(final Integer temperature) {
+	public T temperature(final Double temperature) {
 		this.setTemperature(temperature);
 		return this.typeClass.cast(this);
 	}

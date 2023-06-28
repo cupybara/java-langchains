@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -47,7 +48,7 @@ public class ReadDocumentsFromPdfChain implements Chain<Path, Stream<Map<String,
 		document.put(PromptConstants.CONTENT, content);
 		document.put(PromptConstants.SOURCE, pdfPath.getFileName().toString());
 
-		LOGGER.info("successfully read document {}", pdfPath.getFileName());
+		LogManager.getLogger(getClass()).info("successfully read document {}", pdfPath.getFileName());
 
 		return document;
 	}

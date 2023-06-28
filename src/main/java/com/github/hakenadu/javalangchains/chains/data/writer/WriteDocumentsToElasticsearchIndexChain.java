@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
+import org.apache.logging.log4j.LogManager;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
@@ -114,12 +115,12 @@ public class WriteDocumentsToElasticsearchIndexChain implements Chain<Stream<Map
 		final Request indexExistsRequest = new Request("HEAD", '/' + index);
 		final Response indexExistsResponse = restClient.performRequest(indexExistsRequest);
 		if (indexExistsResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-			LOGGER.info("index {} exists", index);
+			LogManager.getLogger(getClass()).info("index {} exists", index);
 			return;
 		}
 
-		LOGGER.info("creating index {} with default settings", index);
-		
+		LogManager.getLogger(getClass()).info("creating index {} with default settings", index);
+
 		// https://github.com/hwchase17/langchain/blob/master/langchain/retrievers/elastic_search_bm25.py
 		final ObjectNode indexRequestBody = this.objectMapper.createObjectNode();
 
@@ -132,11 +133,12 @@ public class WriteDocumentsToElasticsearchIndexChain implements Chain<Stream<Map
 		// "similarity": {"custom_bm25": {"type": "BM25", "k1": 2.0, "b": 0.75}
 		settings.putObject("similarity").putObject("custom_bm25").put("type", "BM25").put("k1", 2.0).put("b", 0.75);
 
-		// "mappings": {"properties": {"content": {"type": "text", "similarity": "custom_bm25"}}}
+		// "mappings": {"properties": {"content": {"type": "text", "similarity":
+		// "custom_bm25"}}}
 		indexRequestBody.putObject("mappings").putObject("properties").putObject(PromptConstants.CONTENT)
 				.put("type", "text").put("similarity", "custom_bm25");
-		
-		final String  indexRequestBodyJson = indexRequestBody.toString();
+
+		final String indexRequestBodyJson = indexRequestBody.toString();
 		final Request indexRequest = new Request("PUT", '/' + index);
 		indexRequest.setJsonEntity(indexRequestBodyJson);
 		try {

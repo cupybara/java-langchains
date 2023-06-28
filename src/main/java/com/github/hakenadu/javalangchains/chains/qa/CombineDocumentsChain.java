@@ -52,8 +52,8 @@ public class CombineDocumentsChain implements Chain<Stream<Map<String, String>>,
 		}).collect(Collectors.joining("\n\n"));
 
 		final Map<String, String> result = new HashMap<>();
-		result.put("question", questionRef.get());
-		result.put("content", combinedContent);
+		result.put(PromptConstants.QUESTION, questionRef.get());
+		result.put(PromptConstants.CONTENT, combinedContent);
 		return result;
 	}
 

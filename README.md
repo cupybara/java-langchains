@@ -210,7 +210,7 @@ The ModifyDocumentsContentChain can be used for document summarization (for exam
 // create the llm chain which is used for summarization
 LargeLanguageModelChain llmChain = new OpenAiChatCompletionsChain(
 		PromptTemplates.QA_SUMMARIZE, 
-		new OpenAiChatCompletionsParameters().temperature(0).model("gpt-3.5-turbo"),
+		new OpenAiChatCompletionsParameters().temperature(0D).model("gpt-3.5-turbo"),
 		System.getenv("OPENAI_API_KEY"));
 
 // create the ModifyDocumentsContentChain which is used to apply the llm chain to each passed document
@@ -339,7 +339,7 @@ Directory directory =  new ReadDocumentsFromPdfChain().chain(new WriteDocumentsT
 
 // we got multiple OpenAI LLM Chains and define our parameters at first
 OpenAiChatCompletionsParameters openAiChatParameters = new OpenAiChatCompletionsParameters()
-		.temperature(0)
+		.temperature(0D)
 		.model("gpt-3.5-turbo");
 
 /*

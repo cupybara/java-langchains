@@ -72,7 +72,7 @@ class RetrievalQaTest {
 	@Test
 	void testQa() throws IOException {
 		final OpenAiChatCompletionsParameters openAiChatParameters = new OpenAiChatCompletionsParameters()
-				.temperature(0).model("gpt-3.5-turbo");
+				.temperature(0D).model("gpt-3.5-turbo");
 
 		/*
 		 * Chain 1: The retrievalChain is used to retrieve relevant documents from an
@@ -109,9 +109,14 @@ class RetrievalQaTest {
 			 */
 			final MapAnswerWithSourcesChain mapAnswerWithSourcesChain = new MapAnswerWithSourcesChain();
 
+			// @formatter:off
 			// we combine all chain links into a self contained QA chain
-			final Chain<String, AnswerWithSources> qaChain = retrievalChain.chain(summarizeDocumentsChain)
-					.chain(combineDocumentsChain).chain(openAiChatChain).chain(mapAnswerWithSourcesChain);
+			final Chain<String, AnswerWithSources> qaChain = retrievalChain
+					.chain(summarizeDocumentsChain)
+					.chain(combineDocumentsChain)
+					.chain(openAiChatChain)
+					.chain(mapAnswerWithSourcesChain);
+			// @formatter:on
 
 			// the QA chain can now be called with a question and delivers an answer
 			final AnswerWithSources answerToValidQuestion = qaChain.run("who is john doe?");
