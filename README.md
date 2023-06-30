@@ -50,12 +50,24 @@ This section describes the usage of all chains that are currently available.
 #### Reader
 
 ##### Read Documents from PDF
+See [ReadDocumentsFromPdfChainTest](src/test/java/com/github/hakenadu/javalangchains/chains/data/read/ReadDocumentsFromPdfChainTest.java)
+
+Read each pdf in the given directory into a single document each
 
 ```java
 Stream<Map<String, String>> readDocuments = new ReadDocumentsFromPdfChain()
 	.run(Paths.get("path/to/my/pdf/folder"))
 	
 // the readDocuments contains (content, source) pairs for all read pdfs (source is the pdf filename)
+```
+
+Read each page of each pdf in the given directory into a single document each
+
+```java
+Stream<Map<String, String>> readDocuments = new ReadDocumentsFromPdfChain(PdfReadMode.PAGES)
+	.run(Paths.get("path/to/my/pdf/folder"))
+	
+// the readDocuments contains (content, source) pairs for all read pdf pages (source is the pdf filename + the pdf page number)
 ```
 
 #### Retrieval
