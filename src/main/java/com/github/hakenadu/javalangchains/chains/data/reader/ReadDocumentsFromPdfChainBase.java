@@ -31,7 +31,7 @@ public abstract class ReadDocumentsFromPdfChainBase<I> implements Chain<I, Strea
 		WHOLE,
 
 		/**
-		 * Reads each document page by page => provides a list of documents for each
+		 * Reads each document page by page: provides a list of documents for each
 		 * document and adds "p. ${pageIndex}" to each "source" field
 		 */
 		PAGES;
