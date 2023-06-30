@@ -7,6 +7,7 @@ It was born from the need to create an enterprise QA application.
 - [Chains](#chains)
     - [Data](#data)
         - [Reader](#reader)
+            - [Read Documents from In Memory PDF](#read-documents-from-in-memory-pdf)
             - [Read Documents from PDF](#read-documents-from-pdf)
         - [Retrieval](#retrieval)
             - [Retrieve Documents from Elasticsearch Index](#retrieve-documents-from-elasticsearch-index)
@@ -48,6 +49,33 @@ This section describes the usage of all chains that are currently available.
 ### Data
 
 #### Reader
+
+##### Read Documents from In Memory PDF
+See [ReadDocumentsFromInMemoryPdfChainTest](src/test/java/com/github/hakenadu/javalangchains/chains/data/read/ReadDocumentsFromInMemoryPdfChainTest.java)
+
+Read the in memory pdf into a single document
+
+```java
+InMemoryPdf inMemoryPdf = new InMemoryPdf(
+	IOUtils.toByteArray(ReadDocumentsFromInMemoryPdfChainTest.class.getResourceAsStream("/pdf/qa/book-of-john-3.pdf")),
+	"my-in-memory.pdf");
+	
+Stream<Map<String, String>> readDocuments = new ReadDocumentsFromInMemoryPdfChain().run(inMemoryPdf)
+	
+// the readDocuments contains a (pdfContent, "my-in-memory.pdf") pair
+```
+
+Read documents for each page of the in memory pdf
+
+```java
+InMemoryPdf inMemoryPdf = new InMemoryPdf(
+	IOUtils.toByteArray(ReadDocumentsFromInMemoryPdfChainTest.class.getResourceAsStream("/pdf/qa/book-of-john-3.pdf")),
+	"my-in-memory.pdf");
+	
+Stream<Map<String, String>> readDocuments = new ReadDocumentsFromInMemoryPdfChain(PdfReadMode.PAGES).run(inMemoryPdf)
+	
+// the readDocuments contains (content, source) pairs for all read pdf pages (source is "my-in-memory.pdf" + the pdf page number)
+```
 
 ##### Read Documents from PDF
 See [ReadDocumentsFromPdfChainTest](src/test/java/com/github/hakenadu/javalangchains/chains/data/read/ReadDocumentsFromPdfChainTest.java)

@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import com.github.hakenadu.javalangchains.chains.data.reader.ReadDocumentsFromPdfChain;
-import com.github.hakenadu.javalangchains.chains.data.reader.ReadDocumentsFromPdfChain.PdfReadMode;
+import com.github.hakenadu.javalangchains.chains.data.reader.ReadDocumentsFromPdfChainBase.PdfReadMode;
 import com.github.hakenadu.javalangchains.util.PromptConstants;
 
 /**
