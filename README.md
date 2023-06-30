@@ -28,6 +28,7 @@ It was born from the need to create an enterprise QA application.
         - [Map LLM results to answers with sources](#map-llm-results-to-answers-with-sources)
         - [Split Documents](#split-documents)
 - [Use Cases](#use-cases)
+    - [Document Comparison](#document-comparison)
     - [Retrieval Question-Answering Chain](#retrieval-question-answering-chain)
 
 ## Dependency
@@ -360,8 +361,12 @@ List<Map<String, String>> splitDocuments = splitDocumentsChain.run(documents.str
 ## Use Cases
 Multiple chains can be chained together to create more powerful chains for complex use cases.
 
+### Document Comparison
+The [following unit test](src/test/java/com/github/hakenadu/javalangchains/usecases/DocumentComparisonTest.java) shows how the existing chains may be used to compare 2 or more documents.
+I guess more abstraction would be useful. I will target that in one of the next releases and then also include example code in this README.
+
 ### Retrieval Question-Answering Chain 
-The [following integration test](src/test/java/com/github/hakenadu/javalangchains/usecases/RetrievalQaTest.java) provides a comprehensive solution for an information retrieval and summarization task, with the aim to provide concise, informative and relevant answers from a large set of documents. It combines multiple processes into a Question-Answering (QA) chain, each responsible for a specific task.
+The [following unit test](src/test/java/com/github/hakenadu/javalangchains/usecases/RetrievalQaTest.java) provides a comprehensive solution for an information retrieval and summarization task, with the aim to provide concise, informative and relevant answers from a large set of documents. It combines multiple processes into a Question-Answering (QA) chain, each responsible for a specific task.
 
 ```java
 /*
