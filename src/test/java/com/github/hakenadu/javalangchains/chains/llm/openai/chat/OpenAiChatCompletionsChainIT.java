@@ -23,9 +23,11 @@ class OpenAiChatCompletionsChainIT {
 	void testRun() {
 		final OpenAiChatCompletionsParameters parameters = new OpenAiChatCompletionsParameters();
 		parameters.setModel("gpt-3.5-turbo");
+		parameters.setTemperature(0D);
 
 		final OpenAiChatCompletionsChain chain = new OpenAiChatCompletionsChain(
-				"Hello, this is ${name}. What was my name again?", parameters, System.getenv("OPENAI_API_KEY"));
+				"Hello, this is ${name}. What was my name again?", parameters, System.getenv("OPENAI_API_KEY"),
+				"You are a helpful assistant who answers questions to ${name}");
 
 		final String name = "Manuel";
 		final String result = chain.run(Collections.singletonMap("name", name));
