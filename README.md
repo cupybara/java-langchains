@@ -365,6 +365,11 @@ Multiple chains can be chained together to create more powerful chains for compl
 The [following unit test](src/test/java/com/github/hakenadu/javalangchains/usecases/DocumentComparisonTest.java) shows how the existing chains may be used to compare 2 or more documents.
 I guess more abstraction would be useful. I will target that in one of the next releases and then also include example code in this README.
 
+The following diagram shows how the implementation for this usecase works:
+
+![](misc/drawio/docment-comparison.svg)
+
+
 ### Retrieval Question-Answering Chain 
 The [following unit test](src/test/java/com/github/hakenadu/javalangchains/usecases/RetrievalQaTest.java) provides a comprehensive solution for an information retrieval and summarization task, with the aim to provide concise, informative and relevant answers from a large set of documents. It combines multiple processes into a Question-Answering (QA) chain, each responsible for a specific task.
 
