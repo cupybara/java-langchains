@@ -2,6 +2,7 @@ package com.github.hakenadu.javalangchains.chains.data.writer;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.apache.http.HttpHost;
@@ -40,15 +41,33 @@ public class WriteDocumentsToElasticsearchIndexChain implements Chain<Stream<Map
 	private final ObjectMapper objectMapper;
 
 	/**
+	 * Optional {@link Function} which provides an ID value for a document. If set,
+	 * documents are indexed using PUT /_doc/${id} instead of POST /_doc
+	 */
+	private final Function<Map<String, String>, String> idProvider;
+
+	/**
+	 * @param index             {@link #index}
+	 * @param restClientBuilder {@link #restClientBuilder}
+	 * @param objectMapper      {@link #objectMapper}
+	 * @param idProvider        {@link #idProvider}
+	 */
+	public WriteDocumentsToElasticsearchIndexChain(final String index, final RestClientBuilder restClientBuilder,
+			final ObjectMapper objectMapper, final Function<Map<String, String>, String> idProvider) {
+		this.index = index;
+		this.restClientBuilder = restClientBuilder;
+		this.objectMapper = objectMapper;
+		this.idProvider = idProvider;
+	}
+
+	/**
 	 * @param index             {@link #index}
 	 * @param restClientBuilder {@link #restClientBuilder}
 	 * @param objectMapper      {@link #objectMapper}
 	 */
 	public WriteDocumentsToElasticsearchIndexChain(final String index, final RestClientBuilder restClientBuilder,
 			final ObjectMapper objectMapper) {
-		this.index = index;
-		this.restClientBuilder = restClientBuilder;
-		this.objectMapper = objectMapper;
+		this(index, restClientBuilder, objectMapper, null);
 	}
 
 	/**
@@ -87,7 +106,7 @@ public class WriteDocumentsToElasticsearchIndexChain implements Chain<Stream<Map
 							jsonProcessingException);
 				}
 
-				final Request indexRequest = new Request("POST", String.format("/%s/_doc", index));
+				final Request indexRequest = createIndexRequest(document);
 				indexRequest.setJsonEntity(documentJson);
 				try {
 					restClient.performRequest(indexRequest);
@@ -102,6 +121,16 @@ public class WriteDocumentsToElasticsearchIndexChain implements Chain<Stream<Map
 		return null;
 	}
 
+	private Request createIndexRequest(final Map<String, String> document) {
+		if (idProvider == null) {
+			return new Request("POST", String.format("/%s/_doc", index));
+		} else {
+			final String id = idProvider.apply(document);
+			LogManager.getLogger(getClass()).debug("creating document with id {}", id);
+			return new Request("PUT", String.format("/%s/_doc/%s", index, id));
+		}
+	}
+
 	/**
 	 * Checks whether an index with the name {@link #index} exists. If none exists,
 	 * it is created with default settings used for
@@ -111,7 +140,7 @@ public class WriteDocumentsToElasticsearchIndexChain implements Chain<Stream<Map
 	 *                   requests
 	 * @throws IOException on error
 	 */
-	private void createIndexIfNotExists(final RestClient restClient) throws IOException {
+	private synchronized void createIndexIfNotExists(final RestClient restClient) throws IOException {
 		final Request indexExistsRequest = new Request("HEAD", '/' + index);
 		final Response indexExistsResponse = restClient.performRequest(indexExistsRequest);
 		if (indexExistsResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
