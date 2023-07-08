@@ -192,6 +192,14 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven.surefire.plugin.version}</version>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>10</source>
+					<target>10</target>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -264,6 +272,12 @@
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
 			<version>${junit.jupiter.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.6.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
