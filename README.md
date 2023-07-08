@@ -12,6 +12,7 @@ It was born from the need to create an enterprise QA application.
         - [Retrieval](#retrieval)
             - [Retrieve Documents from Elasticsearch Index](#retrieve-documents-from-elasticsearch-index)
             - [Retrieve Documents from Lucene Directory](#retrieve-documents-from-lucene-directory)
+			- [Retrieve Documents from a relational database](#retrieve-documents-from-rdbms)
         - [Writer](#writer)
             - [Write Documents to Elasticsearch Index](#write-documents-to-elasticsearch-index)
             - [Write Documents to Lucene Directory](#write-documents-to-lucene-directory)
@@ -151,6 +152,24 @@ try (IndexWriter indexWriter = new IndexWriter(directory, new IndexWriterConfig(
 RetrievalChain retrievalChain = new LuceneRetrievalChain(directory, 2 /* max count of retrieved documents */);
 
 // retrieve the most relevant documents for the passed question
+Stream<Map<String, String>> retrievedDocuments = retrievalChain.run("my question?");
+```
+
+
+##### Retrieve Documents from RDBMS
+See [JdbcRetrievalChainIT](src/test/java/com/github/hakenadu/javalangchains/chains/data/retrieval/JdbcRetrievalChainIT.java)
+
+```java
+Supplier<Connection> connectionSupplier = () -> {
+	try {
+		return DriverManager.getConnection(connectionString, username, password);
+	} catch (SQLException e) {
+		throw new IllegalStateException("error creating database connection", e);
+	}
+};
+
+RetrievalChain retrievalChain = new JdbcRetrievalChain(connectionSupplier, 2 /* max count of retrieved documents */);
+
 Stream<Map<String, String>> retrievedDocuments = retrievalChain.run("my question?");
 ```
 

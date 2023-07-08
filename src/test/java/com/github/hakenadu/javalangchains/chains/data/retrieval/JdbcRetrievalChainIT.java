@@ -42,11 +42,11 @@ public class JdbcRetrievalChainIT {
         if(connection.getMetaData().getTables("langchain_test", null, null, new String[] {"TABLE"}).next()) {
             createTableStatement.execute("DROP TABLE Documents");
         }
-        createTableStatement.execute("CREATE TABLE Documents (source VARCHAR PRIMARY KEY, content VARCHAR)");
+        createTableStatement.execute("CREATE TABLE Documents (source VARCHAR PRIMARY KEY, content VARCHAR, additional_attribute INTEGER)");
         createTableStatement.close();
         for(int i = 0; i < DocumentTestUtil.DOCUMENTS.size(); i++) {
             String content = DocumentTestUtil.DOCUMENTS.get(i);
-            PreparedStatement seedStatement = connection.prepareStatement("INSERT INTO Documents(source, content) VALUES (?, ?)");
+            PreparedStatement seedStatement = connection.prepareStatement("INSERT INTO Documents(source, content, additional_attribute) VALUES (?, ?, 1)");
             seedStatement.setString(1, Integer.toString(i));
             seedStatement.setString(2, content);
             seedStatement.execute();
@@ -65,7 +65,8 @@ public class JdbcRetrievalChainIT {
         assertEquals(1, retrievedDocuments.size(), "incorrect number of retrieved documents");
 
         Map<String, String> document = retrievedDocuments.get(0);
-        assertEquals("0", document.get(PromptConstants.SOURCE));
+        assertEquals("0", document.get("source"));
+        assertEquals("1", document.get("additional_attribute"));
         assertEquals(DocumentTestUtil.DOCUMENT_1, document.get(PromptConstants.CONTENT));
         assertEquals("who is john doe?", document.get(PromptConstants.QUESTION));
     }

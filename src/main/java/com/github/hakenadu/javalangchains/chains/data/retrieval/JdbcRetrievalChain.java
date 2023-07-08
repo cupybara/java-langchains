@@ -3,8 +3,10 @@ package com.github.hakenadu.javalangchains.chains.data.retrieval;
 import com.github.hakenadu.javalangchains.util.PromptConstants;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.swing.text.Document;
 import java.sql.*;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -20,54 +22,46 @@ public class JdbcRetrievalChain extends RetrievalChain {
      */
     private final Function<String, Pair<String, List<Object>>> queryBuilder;
     /**
-     * column name for the document content in the JDBC {@link ResultSet}
+     * transforms a {@link ResultSet} to a document. default implementation in {@link #documentFromResultSet(ResultSet)}
      */
-    private final String contentColumn;
-    /**
-     * column name for the document source in the JDBC {@link ResultSet}
-     */
-    private final String sourceColumn;
+    private final DocumentCreator documentCreator;
 
     /**
      * Creates an instance of {@link JdbcRetrievalChain}
      *
      * @param connectionSupplier {@link  #connectionSupplier}
+     * @param documentCreator    {@link #documentCreator}
      * @param queryBuilder       {@link #queryBuilder}
-     * @param sourceColumn       {@link #sourceColumn}
-     * @param contentColumn      {@link #contentColumn}
      * @param maxDocumentCount   {@link RetrievalChain#getMaxDocumentCount()}
      */
-    public JdbcRetrievalChain(Supplier<Connection> connectionSupplier, Function<String, Pair<String, List<Object>>> queryBuilder, String sourceColumn, String contentColumn, int maxDocumentCount) {
+    public JdbcRetrievalChain(Supplier<Connection> connectionSupplier, Function<String, Pair<String, List<Object>>> queryBuilder, DocumentCreator documentCreator, int maxDocumentCount) {
         super(maxDocumentCount);
         this.connectionSupplier = connectionSupplier;
+        this.documentCreator = documentCreator;
         this.queryBuilder = queryBuilder;
-        this.sourceColumn = sourceColumn;
-        this.contentColumn = contentColumn;
     }
 
     /**
-     * Creates an instance of {@link JdbcRetrievalChain} using {@link #createQuery(String, String, String, String)}
+     * Creates an instance of {@link JdbcRetrievalChain} using {@link #createQuery(String, String, String)}
      * for SQL statement creation.
      *
      * @param connectionSupplier {@link  #connectionSupplier}
      * @param table              Name of the document table used for query creation
-     * @param sourceColumn       {@link #sourceColumn}
-     * @param contentColumn      {@link #contentColumn}
      * @param maxDocumentCount   {@link RetrievalChain#getMaxDocumentCount()}
      */
-    public JdbcRetrievalChain(Supplier<Connection> connectionSupplier, String table, String sourceColumn, String contentColumn, int maxDocumentCount) {
-        this(connectionSupplier, (question) -> createQuery(question, table, sourceColumn, contentColumn), sourceColumn, contentColumn, maxDocumentCount);
+    public JdbcRetrievalChain(Supplier<Connection> connectionSupplier, String table, String contentColumn, int maxDocumentCount) {
+        this(connectionSupplier, (question) -> createQuery(question, table, contentColumn), JdbcRetrievalChain::documentFromResultSet, maxDocumentCount);
     }
 
     /**
-     * Creates an instance of {@link JdbcRetrievalChain} using {@link #createQuery(String, String, String, String)}
+     * Creates an instance of {@link JdbcRetrievalChain} using {@link #createQuery(String, String, String)}
      * for SQL statement creation and `content`, `source` as the result columns and `Documents` as the table.
      *
      * @param connectionSupplier {@link  #connectionSupplier}
      * @param maxDocumentCount   {@link RetrievalChain#getMaxDocumentCount()}
      */
     public JdbcRetrievalChain(Supplier<Connection> connectionSupplier, int maxDocumentCount) {
-        this(connectionSupplier, "Documents", "source", "content", maxDocumentCount);
+        this(connectionSupplier, "Documents", "content", maxDocumentCount);
     }
 
     @Override
@@ -86,7 +80,8 @@ public class JdbcRetrievalChain extends RetrievalChain {
             ResultSet resultSet = statement.executeQuery();
             List<Map<String, String>> queryResult = new ArrayList<>();
             while (resultSet.next()) {
-                Map<String, String> documentMap = documentFromResultSet(resultSet, input);
+                Map<String, String> documentMap = documentCreator.create(resultSet);
+                documentMap.put(PromptConstants.QUESTION, input);
                 queryResult.add(documentMap);
             }
             return queryResult.stream();
@@ -97,18 +92,22 @@ public class JdbcRetrievalChain extends RetrievalChain {
 
     /**
      * Transforms a {@link ResultSet} entry to a document containing the corresponding prompt info.
+     *
      * @param resultSet JDBC {@link ResultSet}
-     * @param input the user's input
      * @return transformed document map
      * @throws SQLException if a column cannot be retrieved from the result set
      */
-    private Map<String, String> documentFromResultSet(ResultSet resultSet, String input) throws SQLException {
-        String source = resultSet.getString(sourceColumn);
-        String content = resultSet.getString(contentColumn);
+    private static Map<String, String> documentFromResultSet(ResultSet resultSet) throws SQLException {
+        ResultSetMetaData metaData = resultSet.getMetaData();
+
         Map<String, String> documentMap = new HashMap<>();
-        documentMap.put(PromptConstants.QUESTION, input);
-        documentMap.put(PromptConstants.CONTENT, content);
-        documentMap.put(PromptConstants.SOURCE, source);
+
+        for(int i = 1; i <= metaData.getColumnCount(); i++) {
+            String columnName = metaData.getColumnName(i);
+            Object value = resultSet.getObject(i);
+            documentMap.put(columnName, value.toString());
+        }
+
         return documentMap;
     }
 
@@ -117,14 +116,22 @@ public class JdbcRetrievalChain extends RetrievalChain {
      * Creates a SQL statement using a content likeness query.
      *
      * @param question      Input / question of the user
-     * @param sourceColumn  Name of the column containing the document source / it's name
      * @param contentColumn Name of the column containing the document content
      * @return a {@link Pair} of the SQL and parameters to bind
      */
-    private static Pair<String, List<Object>> createQuery(final String question, final String table, final String sourceColumn, final String contentColumn) {
-        final String query = String.format("SELECT %s, %s FROM %s WHERE %s LIKE ANY (?)", sourceColumn, contentColumn, table, contentColumn);
+    private static Pair<String, List<Object>> createQuery(final String question, final String table, final String contentColumn) {
+        final String query = String.format("SELECT * FROM %s WHERE %s LIKE ANY (?)", table, contentColumn);
         final String[] splitQuestion = Arrays.stream(question.split(question)).map(t -> String.format("%%%s%%", t)).toArray(String[]::new);
         final List<Object> params = Collections.singletonList(splitQuestion);
         return Pair.of(query, params);
+    }
+
+    /**
+     * Wrapper interface for Lambdas that act as document creators for a JDBC {@link ResultSet}.
+     * Advancing the {@link ResultSet} is not necessary as it is done by the {@link JdbcRetrievalChain}.
+     */
+    @FunctionalInterface
+    public interface DocumentCreator {
+        Map<String, String> create(final ResultSet resultSet) throws SQLException;
     }
 }
