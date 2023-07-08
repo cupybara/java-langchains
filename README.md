@@ -28,6 +28,7 @@ It was born from the need to create an enterprise QA application.
         - [Combine Documents](#combine-documents)
         - [Map LLM results to answers with sources](#map-llm-results-to-answers-with-sources)
         - [Split Documents](#split-documents)
+- [Usage behind a corporate proxy](#usage-behind-a-corporate-proxy)
 - [Use Cases](#use-cases)
     - [Document Comparison](#document-comparison)
     - [Retrieval Question-Answering Chain](#retrieval-question-answering-chain)
@@ -384,6 +385,20 @@ List<Map<String, String>> splitDocuments = splitDocumentsChain.run(documents.str
 //   {content=This is a short text., source=book of jane}
 // ]
 ```
+
+## Usage behind a corporate proxy
+If a chain needs to access to an external service, there will be a constructor parameter for passing the http client.
+The [WebClient](https://docs.spring.io/spring-framework/reference/web/webflux-webclient.html) is used for the following chains:
+* [AzureOpenAiChatCompletionsChain](src/main/java/com/github/hakenadu/javalangchains/chains/llm/azure/chat/AzureOpenAiChatCompletionsChain.java)
+* [AzureOpenAiCompletionsChain](src/main/java/com/github/hakenadu/javalangchains/chains/llm/azure/completions/AzureOpenAiCompletionsChain.java)
+* [OpenAiChatCompletionsChain](src/main/java/com/github/hakenadu/javalangchains/chains/llm/openai/chat/OpenAiChatCompletionsChain.java)
+* [OpenAiCompletionsChain](src/main/java/com/github/hakenadu/javalangchains/chains/llm/openai/completions/OpenAiCompletionsChain.java)
+
+There exists plenty of public documentation on how to configure a http proxy for those cases.
+One example is [this one from Baeldung](https://www.baeldung.com/spring-webflux-timeout).
+
+For accessing an Elasticsearch cluster the [Elasticsearch Low Level Client](https://www.elastic.co/guide/en/elasticsearch/client/java-api-client/current/java-rest-low.html) is used.
+The [official documentation](https://www.elastic.co/guide/en/elasticsearch/client/java-api-client/8.8/java-rest-low-usage-initialization.html) shows how to use a proxy in this case. 
 
 ## Use Cases
 Multiple chains can be chained together to create more powerful chains for complex use cases.
