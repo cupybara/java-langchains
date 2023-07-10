@@ -2,6 +2,7 @@ package com.github.hakenadu.javalangchains.chains.data.writer;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -47,6 +48,29 @@ public class WriteDocumentsToElasticsearchIndexChain implements Chain<Stream<Map
 	private final Function<Map<String, String>, String> idProvider;
 
 	/**
+	 * creates an elasticsearch index by consuming its name and an already
+	 * instantiated {@link RestClient}
+	 */
+	private final BiConsumer<String, RestClient> indexCreator;
+
+	/**
+	 * @param index             {@link #index}
+	 * @param restClientBuilder {@link #restClientBuilder}
+	 * @param objectMapper      {@link #objectMapper}
+	 * @param idProvider        {@link #idProvider}
+	 * @param indexCreator      {@link #indexCreator}
+	 */
+	public WriteDocumentsToElasticsearchIndexChain(final String index, final RestClientBuilder restClientBuilder,
+			final ObjectMapper objectMapper, final Function<Map<String, String>, String> idProvider,
+			final BiConsumer<String, RestClient> indexCreator) {
+		this.index = index;
+		this.restClientBuilder = restClientBuilder;
+		this.objectMapper = objectMapper;
+		this.idProvider = idProvider;
+		this.indexCreator = indexCreator;
+	}
+
+	/**
 	 * @param index             {@link #index}
 	 * @param restClientBuilder {@link #restClientBuilder}
 	 * @param objectMapper      {@link #objectMapper}
@@ -54,10 +78,7 @@ public class WriteDocumentsToElasticsearchIndexChain implements Chain<Stream<Map
 	 */
 	public WriteDocumentsToElasticsearchIndexChain(final String index, final RestClientBuilder restClientBuilder,
 			final ObjectMapper objectMapper, final Function<Map<String, String>, String> idProvider) {
-		this.index = index;
-		this.restClientBuilder = restClientBuilder;
-		this.objectMapper = objectMapper;
-		this.idProvider = idProvider;
+		this(index, restClientBuilder, objectMapper, idProvider, defaultIndexCreator(objectMapper));
 	}
 
 	/**
@@ -95,7 +116,9 @@ public class WriteDocumentsToElasticsearchIndexChain implements Chain<Stream<Map
 	public Void run(final Stream<Map<String, String>> input) {
 		try (final RestClient restClient = restClientBuilder.build()) {
 
-			createIndexIfNotExists(restClient);
+			if (this.indexCreator != null) {
+				createIndexIfNotExists(restClient);
+			}
 
 			input.forEach(document -> {
 				final String documentJson;
@@ -150,30 +173,43 @@ public class WriteDocumentsToElasticsearchIndexChain implements Chain<Stream<Map
 
 		LogManager.getLogger(getClass()).info("creating index {} with default settings", index);
 
-		// https://github.com/hwchase17/langchain/blob/master/langchain/retrievers/elastic_search_bm25.py
-		final ObjectNode indexRequestBody = this.objectMapper.createObjectNode();
+		this.indexCreator.accept(index, restClient);
+	}
 
-		// "settings": {...}
-		final ObjectNode settings = indexRequestBody.putObject("settings");
+	/**
+	 * Realizes the default way of creating an elasticsearch index using the method
+	 * from
+	 * https://github.com/hwchase17/langchain/blob/master/langchain/retrievers/elastic_search_bm25.py
+	 * 
+	 * @param objectMapper {@link ObjectMapper} for json operations
+	 * @return default {@link #indexCreator}
+	 */
+	public static BiConsumer<String, RestClient> defaultIndexCreator(final ObjectMapper objectMapper) {
+		return (indexName, restClient) -> {
+			final ObjectNode indexRequestBody = objectMapper.createObjectNode();
 
-		// "analysis": {"analyzer": {"default": {"type": "standard"}}}
-		settings.putObject("analysis").putObject("analyzer").putObject("default").put("type", "standard");
+			// "settings": {...}
+			final ObjectNode settings = indexRequestBody.putObject("settings");
 
-		// "similarity": {"custom_bm25": {"type": "BM25", "k1": 2.0, "b": 0.75}
-		settings.putObject("similarity").putObject("custom_bm25").put("type", "BM25").put("k1", 2.0).put("b", 0.75);
+			// "analysis": {"analyzer": {"default": {"type": "standard"}}}
+			settings.putObject("analysis").putObject("analyzer").putObject("default").put("type", "standard");
 
-		// "mappings": {"properties": {"content": {"type": "text", "similarity":
-		// "custom_bm25"}}}
-		indexRequestBody.putObject("mappings").putObject("properties").putObject(PromptConstants.CONTENT)
-				.put("type", "text").put("similarity", "custom_bm25");
+			// "similarity": {"custom_bm25": {"type": "BM25", "k1": 2.0, "b": 0.75}
+			settings.putObject("similarity").putObject("custom_bm25").put("type", "BM25").put("k1", 2.0).put("b", 0.75);
 
-		final String indexRequestBodyJson = indexRequestBody.toString();
-		final Request indexRequest = new Request("PUT", '/' + index);
-		indexRequest.setJsonEntity(indexRequestBodyJson);
-		try {
-			restClient.performRequest(indexRequest);
-		} catch (final IOException ioException) {
-			throw new IllegalStateException("error creating index " + indexRequestBodyJson, ioException);
-		}
+			// "mappings": {"properties": {"content": {"type": "text", "similarity":
+			// "custom_bm25"}}}
+			indexRequestBody.putObject("mappings").putObject("properties").putObject(PromptConstants.CONTENT)
+					.put("type", "text").put("similarity", "custom_bm25");
+
+			final String indexRequestBodyJson = indexRequestBody.toString();
+			final Request indexRequest = new Request("PUT", '/' + indexName);
+			indexRequest.setJsonEntity(indexRequestBodyJson);
+			try {
+				restClient.performRequest(indexRequest);
+			} catch (final IOException ioException) {
+				throw new IllegalStateException("error creating index " + indexRequestBodyJson, ioException);
+			}
+		};
 	}
 }
