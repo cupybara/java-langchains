@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -47,6 +48,12 @@ public class ElasticsearchRetrievalChain extends RetrievalChain implements Close
 	private final Function<String, ObjectNode> queryCreator;
 
 	/**
+	 * Consumes an elasticsearch hit and the question and creates a document as a
+	 * result
+	 */
+	private final BiFunction<ObjectNode, String, Map<String, String>> documentCreator;
+
+	/**
 	 * {@link ObjectMapper} used for query creation and document deserialization
 	 */
 	private final ObjectMapper objectMapper;
@@ -59,14 +66,31 @@ public class ElasticsearchRetrievalChain extends RetrievalChain implements Close
 	 * @param maxDocumentCount {@link #getMaxDocumentCount()}
 	 * @param objectMapper     {@link #objectMapper}
 	 * @param queryCreator     {@link #queryCreator}
+	 * @param documentCreator  {@link #documentCreator}
 	 */
 	public ElasticsearchRetrievalChain(final String index, final RestClient restClient, final int maxDocumentCount,
-			final ObjectMapper objectMapper, final Function<String, ObjectNode> queryCreator) {
+			final ObjectMapper objectMapper, final Function<String, ObjectNode> queryCreator,
+			final BiFunction<ObjectNode, String, Map<String, String>> documentCreator) {
 		super(maxDocumentCount);
 		this.index = index;
 		this.restClient = restClient;
 		this.objectMapper = objectMapper;
 		this.queryCreator = queryCreator;
+		this.documentCreator = documentCreator;
+	}
+
+	/**
+	 * Creates an instance of {@link ElasticsearchRetrievalChain}
+	 * 
+	 * @param index            {@link #index}
+	 * @param restClient       {@link #restClient}
+	 * @param maxDocumentCount {@link #getMaxDocumentCount()}
+	 * @param objectMapper     {@link #objectMapper}
+	 * @param queryCreator     {@link #queryCreator}
+	 */
+	public ElasticsearchRetrievalChain(final String index, final RestClient restClient, final int maxDocumentCount,
+			final ObjectMapper objectMapper, final Function<String, ObjectNode> queryCreator) {
+		this(index, restClient, maxDocumentCount, objectMapper, queryCreator, defaultDocumentCreator(objectMapper));
 	}
 
 	/**
@@ -144,24 +168,36 @@ public class ElasticsearchRetrievalChain extends RetrievalChain implements Close
 		}
 
 		return StreamSupport.stream(Spliterators.spliteratorUnknownSize(hits.iterator(), Spliterator.ORDERED), false)
-				.map(ObjectNode.class::cast).map(o -> o.get("_source")).map(ObjectNode.class::cast)
-				.map(source -> createDocument(source, input));
+				.map(ObjectNode.class::cast).map(hitNode -> documentCreator.apply(hitNode, input));
 	}
 
-	private Map<String, String> createDocument(final ObjectNode source, final String question) {
-		final Map<String, Object> sourceMap = objectMapper.convertValue(source,
-				new TypeReference<Map<String, Object>>() {
-					// noop
-				});
+	/**
+	 * creates the default {@link #queryCreator}
+	 * 
+	 * @param objectMapper the {@link ObjectMapper} used for json operations
+	 * @return {@link BiFunction} which consumes a hit node and the question and
+	 *         produces a document consisting of all (key, value)-pairs of the hit's
+	 *         _source object
+	 */
+	public static BiFunction<ObjectNode, String, Map<String, String>> defaultDocumentCreator(
+			final ObjectMapper objectMapper) {
+		return (hitObjectNode, question) -> {
+			final ObjectNode source = (ObjectNode) hitObjectNode.get("_source");
 
-		final Map<String, String> document = new HashMap<>();
-		document.put(PromptConstants.QUESTION, question);
+			final Map<String, Object> sourceMap = objectMapper.convertValue(source,
+					new TypeReference<Map<String, Object>>() {
+						// noop
+					});
 
-		for (final Entry<String, Object> sourceEntry : sourceMap.entrySet()) {
-			document.put(sourceEntry.getKey(), sourceEntry.getValue().toString());
-		}
+			final Map<String, String> document = new HashMap<>();
+			document.put(PromptConstants.QUESTION, question);
 
-		return document;
+			for (final Entry<String, Object> sourceEntry : sourceMap.entrySet()) {
+				document.put(sourceEntry.getKey(), sourceEntry.getValue().toString());
+			}
+
+			return document;
+		};
 	}
 
 	@Override
