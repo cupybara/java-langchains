@@ -40,7 +40,7 @@
 			scm:git:ssh://github.com:Hakenadu/java-langchains.git
 		</developerConnection>
 		<url>https://github.com/Hakenadu/java-langchains/tree/master</url>
-		<tag>v0.4.1</tag>
+		<tag>v0.4.4</tag>
 	</scm>
 
 	<distributionManagement>
