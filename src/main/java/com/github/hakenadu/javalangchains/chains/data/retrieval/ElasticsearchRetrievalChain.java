@@ -171,6 +171,22 @@ public class ElasticsearchRetrievalChain extends RetrievalChain implements Close
 				.map(ObjectNode.class::cast).map(hitNode -> documentCreator.apply(hitNode, input));
 	}
 
+	@Override
+	public void close() throws IOException {
+		this.restClient.close();
+	}
+
+	/**
+	 * @param objectMapper {@link ObjectMapper} used for {@link ObjectNode} creation
+	 * @param question     the question used for retrieval
+	 * @return {"match": {"content": question}}
+	 */
+	private static ObjectNode createQuery(final ObjectMapper objectMapper, final String question) {
+		final ObjectNode query = objectMapper.createObjectNode();
+		query.putObject("match").put(PromptConstants.CONTENT, question);
+		return query;
+	}
+
 	/**
 	 * creates the default {@link #queryCreator}
 	 * 
@@ -198,21 +214,5 @@ public class ElasticsearchRetrievalChain extends RetrievalChain implements Close
 
 			return document;
 		};
-	}
-
-	@Override
-	public void close() throws IOException {
-		this.restClient.close();
-	}
-
-	/**
-	 * @param objectMapper {@link ObjectMapper} used for {@link ObjectNode} creation
-	 * @param question     the question used for retrieval
-	 * @return {"match": {"content": question}}
-	 */
-	private static ObjectNode createQuery(final ObjectMapper objectMapper, final String question) {
-		final ObjectNode query = objectMapper.createObjectNode();
-		query.putObject("match").put(PromptConstants.CONTENT, question);
-		return query;
 	}
 }
