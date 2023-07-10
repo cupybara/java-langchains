@@ -1,15 +1,23 @@
 package com.github.hakenadu.javalangchains.chains.data.retrieval;
 
-import com.github.hakenadu.javalangchains.util.PromptConstants;
-import org.apache.commons.lang3.tuple.Pair;
-
-import javax.swing.text.Document;
-import java.sql.*;
-import java.util.*;
-import java.util.function.BiFunction;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import org.apache.commons.lang3.tuple.Pair;
+
+import com.github.hakenadu.javalangchains.util.PromptConstants;
 
 public class JdbcRetrievalChain extends RetrievalChain {
     /**
