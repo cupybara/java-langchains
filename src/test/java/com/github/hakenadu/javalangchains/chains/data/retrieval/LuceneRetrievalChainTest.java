@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -51,8 +50,8 @@ class LuceneRetrievalChainTest {
 			for (final String content : DocumentTestUtil.DOCUMENTS) {
 				final Document doc = new Document();
 				doc.add(new TextField(PromptConstants.CONTENT, content, Field.Store.YES));
-				doc.add(new StringField(PromptConstants.SOURCE, String.valueOf(DocumentTestUtil.DOCUMENTS.indexOf(content) + 1),
-						Field.Store.YES));
+				doc.add(new StringField(PromptConstants.SOURCE,
+						String.valueOf(DocumentTestUtil.DOCUMENTS.indexOf(content) + 1), Field.Store.YES));
 				indexWriter.addDocument(doc);
 			}
 
@@ -79,7 +78,8 @@ class LuceneRetrievalChainTest {
 			assertEquals("2", mostRelevantDocument.get(PromptConstants.SOURCE), "invalid source");
 
 			assertTrue(mostRelevantDocument.containsKey(PromptConstants.CONTENT), "content key is missing");
-			assertEquals(DocumentTestUtil.DOCUMENT_2, mostRelevantDocument.get(PromptConstants.CONTENT), "invalid content");
+			assertEquals(DocumentTestUtil.DOCUMENT_2, mostRelevantDocument.get(PromptConstants.CONTENT),
+					"invalid content");
 		}
 	}
 }
