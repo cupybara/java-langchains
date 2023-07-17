@@ -1,7 +1,5 @@
 package com.github.hakenadu.javalangchains.chains;
 
-import org.apache.logging.log4j.LogManager;
-
 /**
  * Basic interface for all modular components in this repository. A
  * {@link Chain} accepts an input of type *I* and provides an output of type
@@ -31,12 +29,7 @@ public interface Chain<I, O> {
 	 * @return a new {@link Chain} consisting of the original {@link Chain} and the
 	 *         passed one
 	 */
-	default <B> Chain<I, B> chain(final Chain<O, B> next) {
-		return input -> {
-			final O prevOutput = run(input);
-			LogManager.getLogger(next.getClass()).info("\n\n=================== INPUT ===================\n{}\n=============================================\n", prevOutput);
-
-			return next.run(prevOutput);
-		};
+	default <B> ChainLink<I, O, B> chain(final Chain<O, B> next) {
+		return new ChainLink<>(this, next);
 	}
 }
