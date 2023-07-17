@@ -4,7 +4,7 @@
 
 	<groupId>com.github.hakenadu</groupId>
 	<artifactId>java-langchains</artifactId>
-	<version>0.4.5-SNAPSHOT</version>
+	<version>0.5.0</version>
 
 	<name>Java.langchains</name>
 	<description>
@@ -40,7 +40,7 @@
 			scm:git:ssh://github.com:Hakenadu/java-langchains.git
 		</developerConnection>
 		<url>https://github.com/Hakenadu/java-langchains/tree/master</url>
-		<tag>v0.4.4</tag>
+		<tag>v0.5.0</tag>
 	</scm>
 
 	<distributionManagement>
