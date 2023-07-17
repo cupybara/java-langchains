@@ -18,6 +18,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import com.github.hakenadu.javalangchains.chains.Chain;
+import com.github.hakenadu.javalangchains.chains.base.ApplyToStreamInputChain;
+import com.github.hakenadu.javalangchains.chains.base.logging.LoggingChain;
 import com.github.hakenadu.javalangchains.chains.data.reader.ReadDocumentsFromPdfChain;
 import com.github.hakenadu.javalangchains.chains.data.retrieval.LuceneRetrievalChain;
 import com.github.hakenadu.javalangchains.chains.data.writer.WriteDocumentsToLuceneDirectoryChain;
@@ -78,7 +80,7 @@ class RetrievalQaTest {
 		 * Chain 1: The retrievalChain is used to retrieve relevant documents from an
 		 * index by using bm25 similarity
 		 */
-		try (final LuceneRetrievalChain retrievalChain = new LuceneRetrievalChain(directory, 1)) {
+		try (final LuceneRetrievalChain retrievalChain = new LuceneRetrievalChain(directory, 2)) {
 
 			/*
 			 * Chain 2: The summarizeDocumentsChain is used to summarize documents to only
@@ -113,8 +115,11 @@ class RetrievalQaTest {
 			// we combine all chain links into a self contained QA chain
 			final Chain<String, AnswerWithSources> qaChain = retrievalChain
 					.chain(summarizeDocumentsChain)
+						.chain(new ApplyToStreamInputChain<>(new LoggingChain<>(LoggingChain.defaultLogPrefix("SUMMARIZED_DOCUMENT"))))
 					.chain(combineDocumentsChain)
+						.chain(new LoggingChain<>(LoggingChain.defaultLogPrefix("COMBINED_DOCUMENT")))
 					.chain(openAiChatChain)
+						.chain(new LoggingChain<>(LoggingChain.defaultLogPrefix("LLM_RESULT")))
 					.chain(mapAnswerWithSourcesChain);
 			// @formatter:on
 
