@@ -4,7 +4,7 @@
 
 	<groupId>io.github.cupybara</groupId>
 	<artifactId>java-langchains</artifactId>
-	<version>0.6.1</version>
+	<version>0.6.2-SNAPSHOT</version>
 
 	<name>Java.langchains</name>
 	<description>
@@ -40,7 +40,7 @@
 			scm:git:ssh://github.com:cupybara/java-langchains.git
 		</developerConnection>
 		<url>https://github.com/cupybara/java-langchains/tree/master</url>
-		<tag>v0.6.1</tag>
+		<tag>v0.5.0</tag>
 	</scm>
 
 	<distributionManagement>
