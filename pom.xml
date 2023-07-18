@@ -40,7 +40,7 @@
 			scm:git:ssh://github.com:cupybara/java-langchains.git
 		</developerConnection>
 		<url>https://github.com/cupybara/java-langchains/tree/master</url>
-		<tag>v0.5.0</tag>
+		<tag>v0.6.1</tag>
 	</scm>
 
 	<distributionManagement>

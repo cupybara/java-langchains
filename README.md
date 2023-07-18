@@ -36,14 +36,39 @@ It was born from the need to create an enterprise QA application.
     - [Retrieval Question-Answering Chain](#retrieval-question-answering-chain)
 
 ## Dependency
+java-langchains requires Java 8 or higher
+
+
+To group this repository with other related repositories in the future we lately transferred this repository to the freshly created organization [cupybara](https://github.com/cupybara).
+Therefore we changed the package names from *com.github.hakenadu* to *io.github.cupybara* and also changed the groupId.
+The latest artifact is therefore available by using the following dependency:
+
 ```xml
 <dependency>
-    <groupId>com.github.hakenadu</groupId>
+    <groupId>io.github.cupybara</groupId>
     <artifactId>java-langchains</artifactId>
-    <version>0.5.0</version>
+    <version>0.6.1</version>
 </dependency>
 ```
-(requires Java 8 or higher)
+
+### deprecated older dependency
+
+Packages up to version 0.5.0 are available using the groupId com.github.hakenadu.
+These artifacts are not updates anymore so we don't suggest to use them.
+Please switch to **io.github.cupybara**.
+
+<details>
+  <summary>old dependency</summary>
+  
+  ```xml
+  <dependency>
+      <groupId>com.github.hakenadu</groupId>
+      <artifactId>java-langchains</artifactId>
+      <version>0.5.0</version>
+  </dependency>
+  ```
+</details>
+
 
 ## Chains
 Modular components implement the [Chain](src/main/java/io/github/cupybara/javalangchains/chains/Chain.java) interface.
