@@ -1,12 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>io.github.cupybara</groupId>
 	<artifactId>java-langchains</artifactId>
-	<version>0.5.1-SNAPSHOT</version>
+	<version>0.6.0</version>
 
 	<name>Java.langchains</name>
 	<description>
@@ -42,7 +40,7 @@
 			scm:git:ssh://github.com:cupybara/java-langchains.git
 		</developerConnection>
 		<url>https://github.com/cupybara/java-langchains/tree/master</url>
-		<tag>v0.5.0</tag>
+		<tag>v0.6.0</tag>
 	</scm>
 
 	<distributionManagement>
