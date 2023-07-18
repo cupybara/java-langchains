@@ -46,7 +46,7 @@ It was born from the need to create an enterprise QA application.
 (requires Java 8 or higher)
 
 ## Chains
-Modular components implement the [Chain](src/main/java/com/github/hakenadu/javalangchains/chains/Chain.java) interface.
+Modular components implement the [Chain](src/main/java/io/github/cupybara/javalangchains/chains/Chain.java) interface.
 This provides an easy way to modularize the application and enables us to reuse them for various use cases.
 
 This section describes the usage of all chains that are currently available.
@@ -54,8 +54,8 @@ This section describes the usage of all chains that are currently available.
 ### Base
 
 #### Logging
-The [LoggingChain](src/main/java/com/github/hakenadu/javalangchains/chains/base/logging/LoggingChain.java) can be used to log the previous chain's output.
-Take a look at the [RetrievalQaTest](src/test/java/com/github/hakenadu/javalangchains/usecases/RetrievalQaTest.java) to see some example usages (logging chains indented for improved readability):
+The [LoggingChain](src/main/java/io/github/cupybara/javalangchains/chains/base/logging/LoggingChain.java) can be used to log the previous chain's output.
+Take a look at the [RetrievalQaTest](src/test/java/io/github/cupybara/javalangchains/usecases/RetrievalQaTest.java) to see some example usages (logging chains indented for improved readability):
 
 ```java
 final Chain<String, AnswerWithSources> qaChain = retrievalChain
@@ -69,7 +69,7 @@ final Chain<String, AnswerWithSources> qaChain = retrievalChain
 ```
 
 The summarizeDocumentsChain in this example provides a Stream as an output. To log each item of the Stream the LoggingChain can be wrapped in an 
-[ApplyToStreamInputChain](src/main/java/com/github/hakenadu/javalangchains/chains/base/ApplyToStreamInputChain.java).
+[ApplyToStreamInputChain](src/main/java/io/github/cupybara/javalangchains/chains/base/ApplyToStreamInputChain.java).
 
 This example provides the following log output running the RetrievalQaTest:
 
@@ -105,7 +105,7 @@ SOURCES: book-of-john-3.pdf, book-of-john-1.pdf
 #### Reader
 
 ##### Read Documents from In Memory PDF
-See [ReadDocumentsFromInMemoryPdfChainTest](src/test/java/com/github/hakenadu/javalangchains/chains/data/read/ReadDocumentsFromInMemoryPdfChainTest.java)
+See [ReadDocumentsFromInMemoryPdfChainTest](src/test/java/io/github/cupybara/javalangchains/chains/data/read/ReadDocumentsFromInMemoryPdfChainTest.java)
 
 Read the in memory pdf into a single document
 
@@ -132,7 +132,7 @@ Stream<Map<String, String>> readDocuments = new ReadDocumentsFromInMemoryPdfChai
 ```
 
 ##### Read Documents from PDF
-See [ReadDocumentsFromPdfChainTest](src/test/java/com/github/hakenadu/javalangchains/chains/data/read/ReadDocumentsFromPdfChainTest.java)
+See [ReadDocumentsFromPdfChainTest](src/test/java/io/github/cupybara/javalangchains/chains/data/read/ReadDocumentsFromPdfChainTest.java)
 
 Read each pdf in the given directory into a single document each
 
@@ -155,7 +155,7 @@ Stream<Map<String, String>> readDocuments = new ReadDocumentsFromPdfChain(PdfRea
 #### Retrieval
 
 ##### Retrieve Documents from Elasticsearch Index
-See [ElasticsearchRetrievalChainIT](src/test/java/com/github/hakenadu/javalangchains/chains/data/retrieval/ElasticsearchRetrievalChainIT.java)
+See [ElasticsearchRetrievalChainIT](src/test/java/io/github/cupybara/javalangchains/chains/data/retrieval/ElasticsearchRetrievalChainIT.java)
 
 ```java
 RestClientBuilder restClientBuilder = RestClient.builder(new HttpHost("localhost", 9200));
@@ -180,7 +180,7 @@ try (RestClient restClient = restClientBuilder.build();
 ```
 
 ##### Retrieve Documents from Lucene Directory
-See [LuceneRetrievalChainTest](src/test/java/com/github/hakenadu/javalangchains/chains/data/retrieval/LuceneRetrievalChainTest.java)
+See [LuceneRetrievalChainTest](src/test/java/io/github/cupybara/javalangchains/chains/data/retrieval/LuceneRetrievalChainTest.java)
 
 ```java
 // create lucene index
@@ -209,7 +209,7 @@ Stream<Map<String, String>> retrievedDocuments = retrievalChain.run("my question
 
 
 ##### Retrieve Documents from RDBMS
-See [JdbcRetrievalChainIT](src/test/java/com/github/hakenadu/javalangchains/chains/data/retrieval/JdbcRetrievalChainIT.java)
+See [JdbcRetrievalChainIT](src/test/java/io/github/cupybara/javalangchains/chains/data/retrieval/JdbcRetrievalChainIT.java)
 
 ```java
 Supplier<Connection> connectionSupplier = () -> {
@@ -258,7 +258,7 @@ Directory directory = createLuceneIndexChain.run(pdfDirectoryPath);
 #### Azure
 
 ##### Azure Chat
-See [AzureOpenAiChatCompletionsChainIT](src/test/java/com/github/hakenadu/javalangchains/chains/llm/azure/chat/AzureOpenAiChatCompletionsChainIT.java)
+See [AzureOpenAiChatCompletionsChainIT](src/test/java/io/github/cupybara/javalangchains/chains/llm/azure/chat/AzureOpenAiChatCompletionsChainIT.java)
 
 ```java
 AzureOpenAiChatCompletionsChain chain = new AzureOpenAiChatCompletionsChain(
@@ -294,7 +294,7 @@ String result = chain.run(Collections.singletonMap("name", "Manuel"));
 #### OpenAI
 
 ##### OpenAI Chat
-See [OpenAiChatCompletionsChainIT](src/test/java/com/github/hakenadu/javalangchains/chains/llm/openai/chat/OpenAiChatCompletionsChainIT.java)
+See [OpenAiChatCompletionsChainIT](src/test/java/io/github/cupybara/javalangchains/chains/llm/openai/chat/OpenAiChatCompletionsChainIT.java)
 
 ```java
 OpenAiChatCompletionsChain chain = new OpenAiChatCompletionsChain(
@@ -393,7 +393,7 @@ System.out.println(answerWithSources.getSources()); // [page 1 book xy, page 2 b
 ```
 
 #### Split Documents
-See [SplitDocumentsChainTest](src/test/java/com/github/hakenadu/javalangchains/chains/qa/split/SplitDocumentsChainTest.java)
+See [SplitDocumentsChainTest](src/test/java/io/github/cupybara/javalangchains/chains/qa/split/SplitDocumentsChainTest.java)
 
 ```java
 
@@ -440,10 +440,10 @@ List<Map<String, String>> splitDocuments = splitDocumentsChain.run(documents.str
 ## Usage behind a corporate proxy
 If a chain needs to access to an external service, there will be a constructor parameter for passing the http client.
 The [WebClient](https://docs.spring.io/spring-framework/reference/web/webflux-webclient.html) is used for the following chains:
-* [AzureOpenAiChatCompletionsChain](src/main/java/com/github/hakenadu/javalangchains/chains/llm/azure/chat/AzureOpenAiChatCompletionsChain.java)
-* [AzureOpenAiCompletionsChain](src/main/java/com/github/hakenadu/javalangchains/chains/llm/azure/completions/AzureOpenAiCompletionsChain.java)
-* [OpenAiChatCompletionsChain](src/main/java/com/github/hakenadu/javalangchains/chains/llm/openai/chat/OpenAiChatCompletionsChain.java)
-* [OpenAiCompletionsChain](src/main/java/com/github/hakenadu/javalangchains/chains/llm/openai/completions/OpenAiCompletionsChain.java)
+* [AzureOpenAiChatCompletionsChain](src/main/java/io/github/cupybara/javalangchains/chains/llm/azure/chat/AzureOpenAiChatCompletionsChain.java)
+* [AzureOpenAiCompletionsChain](src/main/java/io/github/cupybara/javalangchains/chains/llm/azure/completions/AzureOpenAiCompletionsChain.java)
+* [OpenAiChatCompletionsChain](src/main/java/io/github/cupybara/javalangchains/chains/llm/openai/chat/OpenAiChatCompletionsChain.java)
+* [OpenAiCompletionsChain](src/main/java/io/github/cupybara/javalangchains/chains/llm/openai/completions/OpenAiCompletionsChain.java)
 
 There exists plenty of public documentation on how to configure a http proxy for those cases.
 One example is [this one from Baeldung](https://www.baeldung.com/spring-webflux-timeout).
@@ -455,7 +455,7 @@ The [official documentation](https://www.elastic.co/guide/en/elasticsearch/clien
 Multiple chains can be chained together to create more powerful chains for complex use cases.
 
 ### Document Comparison
-The [following unit test](src/test/java/com/github/hakenadu/javalangchains/usecases/DocumentComparisonTest.java) shows how the existing chains may be used to compare 2 or more documents.
+The [following unit test](src/test/java/io/github/cupybara/javalangchains/usecases/DocumentComparisonTest.java) shows how the existing chains may be used to compare 2 or more documents.
 I guess more abstraction would be useful. I will target that in one of the next releases and then also include example code in this README.
 
 The following diagram shows how the implementation for this usecase works:
@@ -464,7 +464,7 @@ The following diagram shows how the implementation for this usecase works:
 
 
 ### Retrieval Question-Answering Chain 
-The [following unit test](src/test/java/com/github/hakenadu/javalangchains/usecases/RetrievalQaTest.java) provides a comprehensive solution for an information retrieval and summarization task, with the aim to provide concise, informative and relevant answers from a large set of documents. It combines multiple processes into a Question-Answering (QA) chain, each responsible for a specific task.
+The [following unit test](src/test/java/io/github/cupybara/javalangchains/usecases/RetrievalQaTest.java) provides a comprehensive solution for an information retrieval and summarization task, with the aim to provide concise, informative and relevant answers from a large set of documents. It combines multiple processes into a Question-Answering (QA) chain, each responsible for a specific task.
 
 ```java
 /*
