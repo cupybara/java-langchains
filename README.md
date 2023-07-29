@@ -47,7 +47,7 @@ The latest artifact is therefore available by using the following dependency:
 <dependency>
     <groupId>io.github.cupybara</groupId>
     <artifactId>java-langchains</artifactId>
-    <version>0.6.1</version>
+    <version>0.6.3</version>
 </dependency>
 ```
 
