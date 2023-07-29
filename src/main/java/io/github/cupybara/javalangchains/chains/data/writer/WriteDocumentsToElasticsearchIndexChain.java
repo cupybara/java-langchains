@@ -74,7 +74,8 @@ public class WriteDocumentsToElasticsearchIndexChain implements Chain<Stream<Map
 	/**
 	 * @param index             {@link #index}
 	 * @param restClientBuilder {@link #restClientBuilder}
-	 * @param objectMapper      {@link #objectMapper}
+	 * @param objectMapper      {@link ObjectMapper} used to create default json
+	 *                          operations
 	 * @param idProvider        {@link #idProvider}
 	 * @param indexCreator      {@link #indexCreator}
 	 */
@@ -88,7 +89,8 @@ public class WriteDocumentsToElasticsearchIndexChain implements Chain<Stream<Map
 	/**
 	 * @param index             {@link #index}
 	 * @param restClientBuilder {@link #restClientBuilder}
-	 * @param objectMapper      {@link #objectMapper}
+	 * @param objectMapper      {@link ObjectMapper} used to create default json
+	 *                          operations
 	 * @param idProvider        {@link #idProvider}
 	 */
 	public WriteDocumentsToElasticsearchIndexChain(final String index, final RestClientBuilder restClientBuilder,
@@ -99,7 +101,8 @@ public class WriteDocumentsToElasticsearchIndexChain implements Chain<Stream<Map
 	/**
 	 * @param index             {@link #index}
 	 * @param restClientBuilder {@link #restClientBuilder}
-	 * @param objectMapper      {@link #objectMapper}
+	 * @param objectMapper      {@link ObjectMapper} used to create default json
+	 *                          operations
 	 */
 	public WriteDocumentsToElasticsearchIndexChain(final String index, final RestClientBuilder restClientBuilder,
 			final ObjectMapper objectMapper) {
