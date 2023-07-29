@@ -38,11 +38,6 @@ public class WriteDocumentsToElasticsearchIndexChain implements Chain<Stream<Map
 	private final RestClientBuilder restClientBuilder;
 
 	/**
-	 * {@link ObjectMapper} used for document serialization
-	 */
-	private final ObjectMapper objectMapper;
-
-	/**
 	 * Optional {@link Function} which provides an ID value for a document. If set,
 	 * documents are indexed using PUT /_doc/${id} instead of POST /_doc
 	 */
@@ -55,6 +50,28 @@ public class WriteDocumentsToElasticsearchIndexChain implements Chain<Stream<Map
 	private final BiConsumer<String, RestClient> indexCreator;
 
 	/**
+	 * creates the effective document json from an input document
+	 */
+	private final Function<Map<String, String>, String> documentJsonCreator;
+
+	/**
+	 * @param index               {@link #index}
+	 * @param restClientBuilder   {@link #restClientBuilder}
+	 * @param idProvider          {@link #idProvider}
+	 * @param indexCreator        {@link #indexCreator}
+	 * @param documentJsonCreator {@link #documentJsonCreator}
+	 */
+	public WriteDocumentsToElasticsearchIndexChain(final String index, final RestClientBuilder restClientBuilder,
+			final Function<Map<String, String>, String> idProvider, final BiConsumer<String, RestClient> indexCreator,
+			final Function<Map<String, String>, String> documentJsonCreator) {
+		this.index = index;
+		this.restClientBuilder = restClientBuilder;
+		this.idProvider = idProvider;
+		this.indexCreator = indexCreator;
+		this.documentJsonCreator = documentJsonCreator;
+	}
+
+	/**
 	 * @param index             {@link #index}
 	 * @param restClientBuilder {@link #restClientBuilder}
 	 * @param objectMapper      {@link #objectMapper}
@@ -64,11 +81,8 @@ public class WriteDocumentsToElasticsearchIndexChain implements Chain<Stream<Map
 	public WriteDocumentsToElasticsearchIndexChain(final String index, final RestClientBuilder restClientBuilder,
 			final ObjectMapper objectMapper, final Function<Map<String, String>, String> idProvider,
 			final BiConsumer<String, RestClient> indexCreator) {
-		this.index = index;
-		this.restClientBuilder = restClientBuilder;
-		this.objectMapper = objectMapper;
-		this.idProvider = idProvider;
-		this.indexCreator = indexCreator;
+		this(index, restClientBuilder, idProvider, defaultIndexCreator(objectMapper),
+				defaultDocumentJsonCreator(objectMapper));
 	}
 
 	/**
@@ -122,13 +136,7 @@ public class WriteDocumentsToElasticsearchIndexChain implements Chain<Stream<Map
 			}
 
 			input.forEach(document -> {
-				final String documentJson;
-				try {
-					documentJson = objectMapper.writeValueAsString(document);
-				} catch (final JsonProcessingException jsonProcessingException) {
-					throw new IllegalStateException("error creating json for document " + document,
-							jsonProcessingException);
-				}
+				final String documentJson = documentJsonCreator.apply(document);
 
 				final Request indexRequest = createIndexRequest(document);
 				indexRequest.setJsonEntity(documentJson);
@@ -175,6 +183,24 @@ public class WriteDocumentsToElasticsearchIndexChain implements Chain<Stream<Map
 		LogManager.getLogger(getClass()).info("creating index {} with default settings", index);
 
 		this.indexCreator.accept(index, restClient);
+	}
+
+	/**
+	 * creates the default {@link Function} for creating json documents from input
+	 * documents for this chain
+	 * 
+	 * @param objectMapper {@link ObjectMapper} for json operations
+	 * @return default {@link #documentJsonCreator}
+	 */
+	public static Function<Map<String, String>, String> defaultDocumentJsonCreator(final ObjectMapper objectMapper) {
+		return document -> {
+			try {
+				return objectMapper.writeValueAsString(document);
+			} catch (final JsonProcessingException jsonProcessingException) {
+				throw new IllegalStateException("error creating json for document " + document,
+						jsonProcessingException);
+			}
+		};
 	}
 
 	/**
